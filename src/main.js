@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const FILMS_COUNT = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
@@ -265,8 +265,8 @@ const createPopupFilmDetails = () => {
         </div>
       </form>
     </section>`
-    )
-}
+  );
+};
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -301,10 +301,10 @@ render(filmsBoard, createMostCommentedFilmsExtraSection(), `beforeend`);
 const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
 for (let i = 0; i < extraSections.length; i++) {
-  const section = extraSections[i];
-  const filmsContainer = section.querySelector(`.films-list__container`);
+  const extraFilmsSection = extraSections[i];
+  const extraSectionFilmsContainer = extraFilmsSection.querySelector(`.films-list__container`);
   for (let j = 0; j < EXTRA_SECTIONS_FILMS_COUNT; j++) {
-    render(filmsContainer, createFilmsCard(), `beforeend`);
+    render(extraSectionFilmsContainer, createFilmsCard(), `beforeend`);
   }
 }
 
