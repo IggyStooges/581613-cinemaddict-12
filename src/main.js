@@ -1,4 +1,7 @@
 'use strict'
+const FILMS_COUNT = 5;
+const EXTRA_SECTIONS_FILMS_COUNT = 2;
+
 
 const createUserTitle = () => {
   return (
@@ -147,7 +150,7 @@ render(filmsBoard, createFilmsSection(), `beforeend`);
 const filmsSection = filmsBoard.querySelector(`.films-list`);
 const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
-for (let i = 0; i < 5; i++) {
+for (let i = 0; i < FILMS_COUNT; i++) {
   render(filmsContainer, createFilmsCard(), `beforeend`);
 }
 
@@ -161,7 +164,7 @@ const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 for (let i = 0; i < extraSections.length; i++) {
   const section = extraSections[i];
   const filmsContainer = section.querySelector(`.films-list__container`);
-  for (let i = 0; i < 2; i++) {
+  for (let j = 0; j < EXTRA_SECTIONS_FILMS_COUNT; j++) {
     render(filmsContainer, createFilmsCard(), `beforeend`);
   }
 }
