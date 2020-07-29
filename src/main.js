@@ -268,7 +268,7 @@ const createPopupFilmDetails = () => {
   );
 };
 
-const render = (container, template, place) => {
+const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -276,35 +276,34 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserTitle(), `beforeend`);
+render(siteHeader, createUserTitle());
 render(siteMain, createMainNav(), `afterbegin`);
-render(siteMain, createSortMenu(), `beforeend`);
-render(siteMain, createFilmsBoard(), `beforeend`);
-render(siteFooter, createNumberOfFilms(), `beforeend`);
+render(siteMain, createSortMenu());
+render(siteMain, createFilmsBoard());
+render(siteFooter, createNumberOfFilms());
 
 const filmsBoard = siteMain.querySelector(`.films`);
 
-render(filmsBoard, createFilmsSection(), `beforeend`);
+render(filmsBoard, createFilmsSection());
 
 const filmsSection = filmsBoard.querySelector(`.films-list`);
 const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
 for (let i = 0; i < FILMS_COUNT; i++) {
-  render(filmsContainer, createFilmsCard(), `beforeend`);
+  render(filmsContainer, createFilmsCard());
 }
 
-render(filmsSection, createShowMoreButton(), `beforeend`);
+render(filmsSection, createShowMoreButton());
 
-render(filmsBoard, createTopRatedFilmsExtraSection(), `beforeend`);
-render(filmsBoard, createMostCommentedFilmsExtraSection(), `beforeend`);
+render(filmsBoard, createTopRatedFilmsExtraSection());
+render(filmsBoard, createMostCommentedFilmsExtraSection());
 
 const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
-for (let i = 0; i < extraSections.length; i++) {
-  const extraFilmsSection = extraSections[i];
-  const extraSectionFilmsContainer = extraFilmsSection.querySelector(`.films-list__container`);
-  for (let j = 0; j < EXTRA_SECTIONS_FILMS_COUNT; j++) {
-    render(extraSectionFilmsContainer, createFilmsCard(), `beforeend`);
+for (const section of extraSections) {
+  const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
+  for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
+    render(extraSectionFilmsContainer, createFilmsCard());
   }
 }
 
