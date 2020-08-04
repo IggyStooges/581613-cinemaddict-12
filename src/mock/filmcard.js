@@ -5,6 +5,10 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+const generateRating =() => {
+  return getRandomInteger(10, 100) / 10;
+}
+
 const generateTitle = () => {
   const filmsTitles = [
     `Jay and Silent Bob Strike Back`,
@@ -23,8 +27,8 @@ const generateTitle = () => {
 const generatePoster = () => {
   const posterPaths = [
     `./images/posters/the-dance-of-life.jpg`,
-    `./images/posters/made-for-each-other.jpg`,
-    `./images/posters/popeye-meets-sinbad.jpg`,
+    `./images/posters/made-for-each-other.png`,
+    `./images/posters/popeye-meets-sinbad.png`,
     `./images/posters/sagebrush-trail.jpg`,
     `./images/posters/santa-claus-conquers-the-martians.jpg`,
     `./images/posters/the-great-flamarion.jpg`,
@@ -61,5 +65,6 @@ export const generateFilmsData = () => {
     title: generateTitle(),
     poster: generatePoster(),
     descriptions: generateDescriptions(),
+    rating: generateRating()
   };
 }
