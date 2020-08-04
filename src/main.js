@@ -9,9 +9,13 @@ import {createShowMoreButton} from "./view/show-more-button.js";
 import {createTopRatedFilmsExtraSection} from "./view/top-rated-section.js";
 import {createMostCommentedFilmsExtraSection} from "./view/most-commented-section.js";
 import {createPopupFilmDetails} from "./view/popup-details.js";
+import {generateFilmsData} from "./mock/filmcard.js";
 
 const FILMS_COUNT = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
+const NUMBER_OF_GENERATED_CARD = 20;
+
+const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilmsData);
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -34,8 +38,8 @@ render(filmsBoard, createFilmsSection());
 const filmsSection = filmsBoard.querySelector(`.films-list`);
 const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
-for (let i = 0; i < FILMS_COUNT; i++) {
-  render(filmsContainer, createFilmsCard());
+for (let i = 0; i < filmsCards.length; i++) {
+  render(filmsContainer, createFilmsCard(filmsCards[i]));
 }
 
 render(filmsSection, createShowMoreButton());
@@ -48,7 +52,7 @@ const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 for (const section of extraSections) {
   const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
   for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-    render(extraSectionFilmsContainer, createFilmsCard());
+    render(extraSectionFilmsContainer, createFilmsCard(filmsCards[i]));
   }
 }
 
