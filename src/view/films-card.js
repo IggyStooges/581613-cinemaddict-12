@@ -1,5 +1,5 @@
-export const createFilmsCard = (data, comments) => {
-  const {descriptions, poster, title, rating, year, duration, isWatched, isFavorite, isWatchList} = data;
+export const createFilmsCard = (data) => {
+  const {descriptions, poster, title, rating, year, duration, isWatched, isFavorite, isWatchList, comments, genres} = data;
   const numberOfComments = comments.length;
 
   const favoriteClassName = isFavorite
@@ -34,7 +34,7 @@ export const createFilmsCard = (data, comments) => {
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
         <span class="film-card__duration">${duration}</span>
-        <span class="film-card__genre">Musical</span>
+        <span class="film-card__genre">${genres[0]}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${descriptions}</p>

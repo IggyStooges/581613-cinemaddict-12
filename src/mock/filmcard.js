@@ -1,4 +1,9 @@
 import {getRandomInteger} from "../util.js";
+import {generateCommentDatas} from "./comment.js"
+import {generateManName} from "../util.js"
+import {generateRandomStringFromArray} from "../util.js"
+import {generateDate} from "../util.js"
+import {generateSetByArray} from "../util.js"
 
 const FIRST_FILM_YEAR = 1895;
 
@@ -16,9 +21,20 @@ const generateTitle = () => {
     `Trainspotting`,
   ];
 
-  const randomIndex = getRandomInteger(0, filmsTitles.length - 1);
+  return generateRandomStringFromArray(filmsTitles);
+};
 
-  return filmsTitles[randomIndex];
+const generateCountry = () => {
+  const filmsCountry = [
+    `USA`,
+    `Canada`,
+    `USSR`,
+    `UK`,
+    `Mexico`,
+    `France`,
+  ];
+
+  return generateRandomStringFromArray(filmsCountry);
 };
 
 const generatePoster = () => {
@@ -32,24 +48,19 @@ const generatePoster = () => {
     `./images/posters/the-man-with-the-golden-arm.jpg`,
   ];
 
-  const randomIndex = getRandomInteger(0, posterPaths.length - 1);
-
-  return posterPaths[randomIndex];
+  return generateRandomStringFromArray(posterPaths);
 };
 
 const generateDescriptions = () => {
   const MAX_DESCRIPTION_NUMBER = 5;
   const MIN_DESCRIPTION_NUMBER = 1;
 
-  let descriptionSet = new Set();
   const descriptionText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 
   const desriptioтSentences = descriptionText.replace(/\.$/gm, "").split(`. `);
 
-  for (let i = MIN_DESCRIPTION_NUMBER; i <= MAX_DESCRIPTION_NUMBER; i++) {
-    const randomIndex = getRandomInteger(0, desriptioтSentences.length - 1);
-    descriptionSet.add(desriptioтSentences[randomIndex]);
-  }
+  let descriptionSet = generateSetByArray(desriptioтSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
+
   const generatedDescription = Array.from(descriptionSet).join(`. `);
 
   return generatedDescription.length > 140
@@ -70,16 +81,47 @@ const generateDuration = () => {
   return `${hour + minute}`
 };
 
+const generateGenres = () => {
+  const MAX_GENRES_NUMBER = 3;
+  const MIN_GENRES_NUMBER = 1;
+
+  const genresExamples = [`Drama`, `Comedy`, `Tragedy`, `Documental`]
+
+  let genresSet = generateSetByArray(genresExamples, MAX_GENRES_NUMBER, MIN_GENRES_NUMBER);
+
+  return Array.from(genresSet);
+}
+
+const generateFewNames = () => {
+  const MAX_NAMES = 5;
+  const MIN_NAMES = 1;
+
+  const generateWritersArray = new Array(getRandomInteger(MIN_NAMES, MAX_NAMES)).fill().map(generateManName);
+
+  let genresSet = generateSetByArray(generateWritersArray, MAX_NAMES, MIN_NAMES);
+
+  return Array.from(genresSet).join(`, `);
+}
+
 export const generateFilmsData = () => {
   return {
     title: generateTitle(),
+    originalTitle: generateTitle(),
     poster: generatePoster(),
     descriptions: generateDescriptions(),
     rating: generateRating(),
     year: getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear()),
+    date: generateDate().toLocaleString(`en-JM`, {month: `long`, day: `numeric`}),
     duration: generateDuration(),
     isWatched: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     isWatchList: Boolean(getRandomInteger(0, 1)),
+    comments: generateCommentDatas(),
+    age: getRandomInteger(4, 24),
+    author: generateManName(),
+    writers: generateFewNames(),
+    actors: generateFewNames(),
+    genres: generateGenres(),
+    country: generateCountry()
   };
 };
