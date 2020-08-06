@@ -1,23 +1,24 @@
 import {USER_TITLES} from "../const.js";
 
-export const createUserTitle = (profileData) => {
-  const {numbersOfFilms, avatar} = profileData;
-
-  let userTitle;
-
+const convertUserTitle = (numbersOfFilms) => {
   if (numbersOfFilms === 0) {
-    userTitle = USER_TITLES[0];
+    return USER_TITLES[0];
   } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
-    userTitle = USER_TITLES[1];
+    return USER_TITLES[1];
   } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
-    userTitle = USER_TITLES[2];
+    return USER_TITLES[2];
   } else if (numbersOfFilms > 20) {
-    userTitle = USER_TITLES[3];
+    return USER_TITLES[3];
   }
+  return ``;
+};
+
+export const createUserTitle = (profile) => {
+  const {numbersOfFilms, avatar} = profile;
 
   return (
     `<section class="header__profile profile">
-      <p class="profile__rating">${userTitle}</p>
+      <p class="profile__rating">${convertUserTitle(numbersOfFilms)}</p>
       <img class="profile__avatar" src="${avatar}" alt="Avatar" width="35" height="35">
       </section>`
   );

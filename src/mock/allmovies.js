@@ -1,4 +1,5 @@
-import {getRandomInteger} from "../util.js";
-const MAX_MOVIES_NUMBER = 500000;
+import {getRandomInteger} from "../utils.js";
+const MAX_MOVIES_NUMBER = 100;
+const MIN_MOVIES_NUMBER = 20;
 
-export const allMovieNUmber = getRandomInteger(0, MAX_MOVIES_NUMBER).toLocaleString();
+export const MOVIES_COUNT = getRandomInteger(MIN_MOVIES_NUMBER, MAX_MOVIES_NUMBER).toLocaleString();

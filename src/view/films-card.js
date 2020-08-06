@@ -1,36 +1,51 @@
-export const createFilmsCard = (data) => {
-  const {descriptions, poster, title, rating, year, duration, isWatched, isFavorite, isWatchList, comments, genres} = data;
-  const numberOfComments = comments.length;
-
-  const favoriteClassName = isFavorite
+const determineFavoriteClassName = (flag) => {
+  const favoriteClassName = flag
     ? `film-card__controls-item--favorite film-card__controls-item--active`
     : `film-card__controls-item--favorite`;
+  return favoriteClassName;
+};
 
-  const watchedClassName = isWatched
+const determineWatchedClassName = (flag) => {
+  const watchedClassName = flag
     ? `film-card__controls-item--mark-as-watched film-card__controls-item--active`
     : `film-card__controls-item--mark-as-watched`;
+  return watchedClassName;
+};
 
-  const watcListClassName = isWatchList
+const determineWatcListClassName = (flag) => {
+  const watcListClassName = flag
     ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
     : `film-card__controls-item--add-to-watchlist`;
+  return watcListClassName;
+};
 
-  const calculateRatingColor = () => {
-    let colorCode = ``;
-    if (rating < 5) {
-      colorCode = `poor`;
-    } else if (rating >= 5 && rating < 8) {
-      colorCode = `average`;
-    } else {
-      colorCode = `good`;
-    }
+const calculateRatingColor = (rating) => {
+  if (rating < 5) {
+    return `poor`;
+  } else if (rating >= 5 && rating < 8) {
+    return `average`;
+  } else {
+    return `good`;
+  }
+};
 
-    return colorCode;
-  };
+export const createFilmsCard = (film) => {
+  const {descriptions,
+    poster,
+    title,
+    rating,
+    year,
+    duration,
+    isWatched,
+    isFavorite,
+    isWatchList,
+    comments,
+    genres} = film;
 
   return (
     `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
-      <p class="film-card__rating film-card__rating--${calculateRatingColor()}">${rating}</p>
+      <p class="film-card__rating film-card__rating--${calculateRatingColor(rating)}">${rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
         <span class="film-card__duration">${duration}</span>
@@ -38,11 +53,11 @@ export const createFilmsCard = (data) => {
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${descriptions}</p>
-      <a class="film-card__comments">${numberOfComments} comments</a>
+      <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
-        <button class="film-card__controls-item button ${watcListClassName}">Add to watchlist</button>
-        <button class="film-card__controls-item button ${watchedClassName}">Mark as watched</button>
-        <button class="film-card__controls-item button ${favoriteClassName}">Mark as favorite</button>
+        <button class="film-card__controls-item button ${determineWatcListClassName(isWatchList)}">Add to watchlist</button>
+        <button class="film-card__controls-item button ${determineWatchedClassName(isWatched)}">Mark as watched</button>
+        <button class="film-card__controls-item button ${determineFavoriteClassName(isFavorite)}">Mark as favorite</button>
       </form>
     </article>`
   );

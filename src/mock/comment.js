@@ -1,6 +1,6 @@
-import {getRandomInteger} from "../util.js";
-import {generateManName} from "../util.js";
-import {generateDate} from "../util.js";
+import {getRandomInteger} from "../utils.js";
+import {generateManName} from "../utils.js";
+import {generateDate} from "../utils.js";
 
 const MAX_COMMENTS = 5;
 
@@ -17,7 +17,7 @@ const generateEmodji = () => {
   return emodjiPaths[randomIndex];
 };
 
-const generateCommentText = () => {
+const generateText = () => {
   const comments = [`Booooooooooring`, `Interesting setting and a good cast`, `Almost two hours? Seriously?`, `Very very old. Meh`];
 
   const randomIndex = getRandomInteger(0, comments.length - 1);
@@ -25,16 +25,15 @@ const generateCommentText = () => {
   return comments[randomIndex];
 };
 
-const generateCommentData = () => {
+const generateData = () => {
   return {
     emodji: generateEmodji(),
     date: generateDate().toLocaleString(`en-US`, {day: `numeric`, month: `long`, year: `numeric`}),
     author: generateManName(),
-    text: generateCommentText(),
+    text: generateText(),
   };
 };
 
-
-export const generateCommentDatas = () => {
-  return new Array(getRandomInteger(0, MAX_COMMENTS)).fill().map(generateCommentData);
+export const generateComments = () => {
+  return new Array(getRandomInteger(0, MAX_COMMENTS)).fill().map(generateData);
 };

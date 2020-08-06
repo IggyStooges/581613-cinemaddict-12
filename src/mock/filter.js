@@ -1,10 +1,10 @@
-export const generateFiltersData = (datas) => {
+export const generateFilters = (films) => {
   let watchedFilmsNumber = 0;
   let watchListsFilmsNumber = 0;
   let favoriteListsFilmsNumber = 0;
 
-  for (let data of datas) {
-    const {isWatched, isFavorite, isWatchList} = data;
+  for (let film of films) {
+    const {isWatched, isFavorite, isWatchList} = film;
 
     if (isWatched) {
       watchedFilmsNumber++;

@@ -1,9 +1,9 @@
-import {getRandomInteger} from "../util.js";
-import {generateCommentDatas} from "./comment.js";
-import {generateManName} from "../util.js";
-import {generateRandomStringFromArray} from "../util.js";
-import {generateDate} from "../util.js";
-import {generateSetByArray} from "../util.js";
+import {getRandomInteger} from "../utils.js";
+import {generateComments} from "./comment.js";
+import {generateManName} from "../utils.js";
+import {generateRandomStringFromArray} from "../utils.js";
+import {generateDate} from "../utils.js";
+import {generateSetByArray} from "../utils.js";
 
 const FIRST_FILM_YEAR = 1895;
 
@@ -59,7 +59,7 @@ const generateDescriptions = () => {
 
   const desriptioтSentences = descriptionText.replace(/\.$/gm, ``).split(`. `);
 
-  let descriptionSet = generateSetByArray(desriptioтSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
+  const descriptionSet = generateSetByArray(desriptioтSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
 
   const generatedDescription = Array.from(descriptionSet).join(`. `);
 
@@ -72,11 +72,11 @@ const generateDuration = () => {
   const MAX_FILM_DURATION_HOURS = 10;
   const MINUTES_IN_HOURS = 60;
 
-  let generatedHour = getRandomInteger(0, MAX_FILM_DURATION_HOURS);
-  let generatedMinute = getRandomInteger(0, MINUTES_IN_HOURS);
+  const generatedHour = getRandomInteger(0, MAX_FILM_DURATION_HOURS);
+  const generatedMinute = getRandomInteger(0, MINUTES_IN_HOURS);
 
-  let hour = generatedHour > 0 ? `${generatedHour}h` : ``;
-  let minute = generatedMinute > 0 ? `${generatedMinute}m` : ``;
+  const hour = generatedHour > 0 ? `${generatedHour}h` : ``;
+  const minute = generatedMinute > 0 ? `${generatedMinute}m` : ``;
 
   return `${hour + minute}`;
 };
@@ -87,7 +87,7 @@ const generateGenres = () => {
 
   const genresExamples = [`Drama`, `Comedy`, `Tragedy`, `Documental`];
 
-  let genresSet = generateSetByArray(genresExamples, MAX_GENRES_NUMBER, MIN_GENRES_NUMBER);
+  const genresSet = generateSetByArray(genresExamples, MAX_GENRES_NUMBER, MIN_GENRES_NUMBER);
 
   return Array.from(genresSet);
 };
@@ -98,12 +98,12 @@ const generateFewNames = () => {
 
   const generateWritersArray = new Array(getRandomInteger(MIN_NAMES, MAX_NAMES)).fill().map(generateManName);
 
-  let genresSet = generateSetByArray(generateWritersArray, MAX_NAMES, MIN_NAMES);
+  const genresSet = generateSetByArray(generateWritersArray, MAX_NAMES, MIN_NAMES);
 
   return Array.from(genresSet).join(`, `);
 };
 
-export const generateFilmsData = () => {
+export const generateFilm = () => {
   return {
     title: generateTitle(),
     originalTitle: generateTitle(),
@@ -116,7 +116,7 @@ export const generateFilmsData = () => {
     isWatched: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     isWatchList: Boolean(getRandomInteger(0, 1)),
-    comments: generateCommentDatas(),
+    comments: generateComments(),
     age: getRandomInteger(4, 24),
     author: generateManName(),
     writers: generateFewNames(),

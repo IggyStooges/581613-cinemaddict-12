@@ -9,17 +9,17 @@ import {createShowMoreButton} from "./view/show-more-button.js";
 import {createTopRatedFilmsExtraSection} from "./view/top-rated-section.js";
 import {createMostCommentedFilmsExtraSection} from "./view/most-commented-section.js";
 import {createPopupFilmDetails} from "./view/popup-details.js";
-import {generateFilmsData} from "./mock/filmcard.js";
-import {generateFiltersData} from "./mock/filter.js";
-import {generateProfileData} from "./mock/profile.js";
-import {allMovieNUmber} from "./mock/allmovies.js";
+import {generateFilm} from "./mock/film.js";
+import {generateFilters} from "./mock/filter.js";
+import {generateProfile} from "./mock/profile.js";
+import {MOVIES_COUNT} from "./mock/allmovies.js";
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
 
-const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilmsData);
-const filtersData = generateFiltersData(filmsCards);
-const profileData = generateProfileData();
+const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
+const filters = generateFilters(filmsCards);
+const profile = generateProfile();
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -29,11 +29,11 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserTitle(profileData));
-render(siteMain, createMainNav(filtersData), `afterbegin`);
+render(siteHeader, createUserTitle(profile));
+render(siteMain, createMainNav(filters), `afterbegin`);
 render(siteMain, createSortMenu());
 render(siteMain, createFilmsBoard());
-render(siteFooter, createNumberOfFilms(allMovieNUmber));
+render(siteFooter, createNumberOfFilms(MOVIES_COUNT));
 
 const filmsBoard = siteMain.querySelector(`.films`);
 
@@ -54,7 +54,6 @@ const loadMoreButton = filmsSection.querySelector(`.films-list__show-more`);
 let renderedFilmCount = TASK_COUNT_PER_STEP;
 
 loadMoreButton.addEventListener(`click`, (e) => {
-
   e.preventDefault();
   filmsCards
     .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)

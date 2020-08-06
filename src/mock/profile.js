@@ -1,10 +1,10 @@
-import {getRandomInteger} from "../util.js";
-import {generateRandomStringFromArray} from "../util.js";
+import {getRandomInteger} from "../utils.js";
+import {generateRandomStringFromArray} from "../utils.js";
 
 const MIN_VIEWED_MOVIE = 0;
 const MAX_VIEWED_MOVIE = 1000;
 
-const avatarsPath = [
+const avatarsPaths = [
   `./images/emoji/angry.png`,
   `./images/emoji/puke.png`,
   `./images/emoji/sleeping.png`,
@@ -12,9 +12,9 @@ const avatarsPath = [
   `./images/bitmap.png`,
 ];
 
-export const generateProfileData = () => {
+export const generateProfile = () => {
   return {
     numbersOfFilms: getRandomInteger(MIN_VIEWED_MOVIE, MAX_VIEWED_MOVIE),
-    avatar: generateRandomStringFromArray(avatarsPath),
+    avatar: generateRandomStringFromArray(avatarsPaths),
   };
 };
