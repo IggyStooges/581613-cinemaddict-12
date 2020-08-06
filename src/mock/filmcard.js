@@ -1,9 +1,9 @@
 import {getRandomInteger} from "../util.js";
-import {generateCommentDatas} from "./comment.js"
-import {generateManName} from "../util.js"
-import {generateRandomStringFromArray} from "../util.js"
-import {generateDate} from "../util.js"
-import {generateSetByArray} from "../util.js"
+import {generateCommentDatas} from "./comment.js";
+import {generateManName} from "../util.js";
+import {generateRandomStringFromArray} from "../util.js";
+import {generateDate} from "../util.js";
+import {generateSetByArray} from "../util.js";
 
 const FIRST_FILM_YEAR = 1895;
 
@@ -57,7 +57,7 @@ const generateDescriptions = () => {
 
   const descriptionText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 
-  const desriptioтSentences = descriptionText.replace(/\.$/gm, "").split(`. `);
+  const desriptioтSentences = descriptionText.replace(/\.$/gm, ``).split(`. `);
 
   let descriptionSet = generateSetByArray(desriptioтSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
 
@@ -78,19 +78,19 @@ const generateDuration = () => {
   let hour = generatedHour > 0 ? `${generatedHour}h` : ``;
   let minute = generatedMinute > 0 ? `${generatedMinute}m` : ``;
 
-  return `${hour + minute}`
+  return `${hour + minute}`;
 };
 
 const generateGenres = () => {
   const MAX_GENRES_NUMBER = 3;
   const MIN_GENRES_NUMBER = 1;
 
-  const genresExamples = [`Drama`, `Comedy`, `Tragedy`, `Documental`]
+  const genresExamples = [`Drama`, `Comedy`, `Tragedy`, `Documental`];
 
   let genresSet = generateSetByArray(genresExamples, MAX_GENRES_NUMBER, MIN_GENRES_NUMBER);
 
   return Array.from(genresSet);
-}
+};
 
 const generateFewNames = () => {
   const MAX_NAMES = 5;
@@ -101,7 +101,7 @@ const generateFewNames = () => {
   let genresSet = generateSetByArray(generateWritersArray, MAX_NAMES, MIN_NAMES);
 
   return Array.from(genresSet).join(`, `);
-}
+};
 
 export const generateFilmsData = () => {
   return {

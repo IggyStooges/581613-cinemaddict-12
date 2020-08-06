@@ -1,5 +1,5 @@
-import { getRandomInteger } from "../util.js";
-import { generateRandomStringFromArray } from "../util.js";
+import {getRandomInteger} from "../util.js";
+import {generateRandomStringFromArray} from "../util.js";
 
 const MIN_VIEWED_MOVIE = 0;
 const MAX_VIEWED_MOVIE = 1000;

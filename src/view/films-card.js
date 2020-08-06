@@ -3,29 +3,29 @@ export const createFilmsCard = (data) => {
   const numberOfComments = comments.length;
 
   const favoriteClassName = isFavorite
-  ? `film-card__controls-item--favorite film-card__controls-item--active`
-  : `film-card__controls-item--favorite`;
+    ? `film-card__controls-item--favorite film-card__controls-item--active`
+    : `film-card__controls-item--favorite`;
 
   const watchedClassName = isWatched
-  ? `film-card__controls-item--mark-as-watched film-card__controls-item--active`
-  : `film-card__controls-item--mark-as-watched`;
+    ? `film-card__controls-item--mark-as-watched film-card__controls-item--active`
+    : `film-card__controls-item--mark-as-watched`;
 
   const watcListClassName = isWatchList
-  ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
-  : `film-card__controls-item--add-to-watchlist`;
+    ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
+    : `film-card__controls-item--add-to-watchlist`;
 
   const calculateRatingColor = () => {
     let colorCode = ``;
     if (rating < 5) {
       colorCode = `poor`;
-    } else if (rating >= 5 && rating < 8){
+    } else if (rating >= 5 && rating < 8) {
       colorCode = `average`;
     } else {
       colorCode = `good`;
     }
 
     return colorCode;
-  }
+  };
 
   return (
     `<article class="film-card">

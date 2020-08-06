@@ -1,4 +1,4 @@
-import {USER_TITLES} from "../const.js"
+import {USER_TITLES} from "../const.js";
 
 export const createUserTitle = (profileData) => {
   const {numbersOfFilms, avatar} = profileData;
@@ -7,9 +7,9 @@ export const createUserTitle = (profileData) => {
 
   if (numbersOfFilms === 0) {
     userTitle = USER_TITLES[0];
-  } else if(numbersOfFilms>=1 && numbersOfFilms<=10) {
+  } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
     userTitle = USER_TITLES[1];
-  } else if (numbersOfFilms>=11 && numbersOfFilms<=20) {
+  } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
     userTitle = USER_TITLES[2];
   } else if (numbersOfFilms > 20) {
     userTitle = USER_TITLES[3];

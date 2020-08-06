@@ -20,23 +20,19 @@ export const createPopupFilmDetails = (data) => {
   const fillCommentsList = () => {
     let commentsList = ``;
     for (let comment of comments) {
-      commentsList = commentsList.concat(
-        `
-      <li class="film-details__comment">
-                <span class="film-details__comment-emoji">
-                  <img src="${comment.emodji}" alt="emoji-sleeping" width="55" height="55">
-                </span>
-                <div>
-                  <p class="film-details__comment-text">${comment.text}</p>
-                  <p class="film-details__comment-info">
-                    <span class="film-details__comment-author">${comment.author}</span>
-                    <span class="film-details__comment-day">${comment.date}</span>
-                    <button class="film-details__comment-delete">Delete</button>
-                  </p>
-                </div>
-              </li>
-      `
-      );
+      commentsList = commentsList.concat(`<li class="film-details__comment">
+          <span class="film-details__comment-emoji">
+            <img src="${comment.emodji}" alt="emoji-sleeping" width="55" height="55">
+          </span>
+          <div>
+            <p class="film-details__comment-text">${comment.text}</p>
+            <p class="film-details__comment-info">
+              <span class="film-details__comment-author">${comment.author}</span>
+              <span class="film-details__comment-day">${comment.date}</span>
+              <button class="film-details__comment-delete">Delete</button>
+            </p>
+          </div>
+        </li>`);
     }
     return commentsList;
   };
@@ -44,11 +40,7 @@ export const createPopupFilmDetails = (data) => {
   const fillGenresList = () => {
     let genresList = ``;
     for (let genre of genres) {
-      genresList = genresList.concat(
-        `
-      <span class="film-details__genre">${genre}</span>
-      `
-      );
+      genresList = genresList.concat(`<span class="film-details__genre">${genre}</span>`);
     }
     return genresList;
   };

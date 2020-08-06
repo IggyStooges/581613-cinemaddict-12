@@ -7,19 +7,19 @@ export const generateFiltersData = (datas) => {
     const {isWatched, isFavorite, isWatchList} = data;
 
     if (isWatched) {
-      watchedFilmsNumber ++;
+      watchedFilmsNumber++;
     }
     if (isWatchList) {
-      watchListsFilmsNumber ++;
+      watchListsFilmsNumber++;
     }
     if (isFavorite) {
-      favoriteListsFilmsNumber ++;
+      favoriteListsFilmsNumber++;
     }
   }
 
   return {
-    watchedFilmsNumber: watchedFilmsNumber,
-    watchListsFilmsNumber: watchListsFilmsNumber,
-    favoriteListsFilmsNumber: favoriteListsFilmsNumber,
+    watchedFilmsNumber,
+    watchListsFilmsNumber,
+    favoriteListsFilmsNumber,
   };
 };

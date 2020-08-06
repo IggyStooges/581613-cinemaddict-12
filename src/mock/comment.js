@@ -1,6 +1,6 @@
-import {getRandomInteger} from "../util.js"
-import {generateManName} from "../util.js"
-import {generateDate} from "../util.js"
+import {getRandomInteger} from "../util.js";
+import {generateManName} from "../util.js";
+import {generateDate} from "../util.js";
 
 const MAX_COMMENTS = 5;
 
@@ -37,4 +37,4 @@ const generateCommentData = () => {
 
 export const generateCommentDatas = () => {
   return new Array(getRandomInteger(0, MAX_COMMENTS)).fill().map(generateCommentData);
-}
+};

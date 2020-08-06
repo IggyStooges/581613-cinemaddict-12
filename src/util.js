@@ -8,17 +8,17 @@ export const getRandomInteger = (a = 0, b = 1) => {
 export const generateRandomStringFromArray = (array) => {
   const randomIndex = getRandomInteger(0, array.length - 1);
   return array[randomIndex];
-}
+};
 
 export const generateSetByArray = (array, max, min) => {
-    const newSet = new Set();
+  const newSet = new Set();
 
-    for (let i = min; i <= max; i++) {
-      newSet.add(generateRandomStringFromArray(array));
-    }
+  for (let i = min; i <= max; i++) {
+    newSet.add(generateRandomStringFromArray(array));
+  }
 
-    return newSet;
-}
+  return newSet;
+};
 
 export const generateManName = () => {
   const names = [`John`, `James`, `Deelan`, `Mathew`, `Steven`];

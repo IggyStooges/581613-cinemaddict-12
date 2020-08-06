@@ -13,8 +13,6 @@ import {generateFilmsData} from "./mock/filmcard.js";
 import {generateFiltersData} from "./mock/filter.js";
 import {generateProfileData} from "./mock/profile.js";
 import {allMovieNUmber} from "./mock/allmovies.js";
-import {sortArrayByIndicator} from "./util.js"
-import {sortArrayByNumbersOfProperties} from "./util.js"
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
@@ -62,7 +60,7 @@ loadMoreButton.addEventListener(`click`, (e) => {
     .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)
     .forEach((card) => render(filmsContainer, createFilmsCard(card)));
 
-    renderedFilmCount += TASK_COUNT_PER_STEP;
+  renderedFilmCount += TASK_COUNT_PER_STEP;
 
   if (renderedFilmCount >= filmsCards.length) {
     loadMoreButton.remove();
