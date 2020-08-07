@@ -9,9 +9,17 @@ import {createShowMoreButton} from "./view/show-more-button.js";
 import {createTopRatedFilmsExtraSection} from "./view/top-rated-section.js";
 import {createMostCommentedFilmsExtraSection} from "./view/most-commented-section.js";
 import {createPopupFilmDetails} from "./view/popup-details.js";
+import {generateFilm} from "./mock/film.js";
+import {generateFilters} from "./mock/filter.js";
+import {generateProfile} from "./mock/profile.js";
+import {MOVIES_COUNT} from "./mock/allmovies.js";
 
-const FILMS_COUNT = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
+const NUMBER_OF_GENERATED_CARD = 22;
+
+const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
+const filters = generateFilters(filmsCards);
+const profile = generateProfile();
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -21,11 +29,11 @@ const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
 
-render(siteHeader, createUserTitle());
-render(siteMain, createMainNav(), `afterbegin`);
+render(siteHeader, createUserTitle(profile));
+render(siteMain, createMainNav(filters), `afterbegin`);
 render(siteMain, createSortMenu());
 render(siteMain, createFilmsBoard());
-render(siteFooter, createNumberOfFilms());
+render(siteFooter, createNumberOfFilms(MOVIES_COUNT));
 
 const filmsBoard = siteMain.querySelector(`.films`);
 
@@ -34,11 +42,29 @@ render(filmsBoard, createFilmsSection());
 const filmsSection = filmsBoard.querySelector(`.films-list`);
 const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
-for (let i = 0; i < FILMS_COUNT; i++) {
-  render(filmsContainer, createFilmsCard());
+const TASK_COUNT_PER_STEP = 5;
+
+for (let i = 0; i < TASK_COUNT_PER_STEP; i++) {
+
+  render(filmsContainer, createFilmsCard(filmsCards[i]));
 }
 
 render(filmsSection, createShowMoreButton());
+const loadMoreButton = filmsSection.querySelector(`.films-list__show-more`);
+let renderedFilmCount = TASK_COUNT_PER_STEP;
+
+loadMoreButton.addEventListener(`click`, (e) => {
+  e.preventDefault();
+  filmsCards
+    .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)
+    .forEach((card) => render(filmsContainer, createFilmsCard(card)));
+
+  renderedFilmCount += TASK_COUNT_PER_STEP;
+
+  if (renderedFilmCount >= filmsCards.length) {
+    loadMoreButton.remove();
+  }
+});
 
 render(filmsBoard, createTopRatedFilmsExtraSection());
 render(filmsBoard, createMostCommentedFilmsExtraSection());
@@ -47,9 +73,10 @@ const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
 for (const section of extraSections) {
   const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
+
   for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-    render(extraSectionFilmsContainer, createFilmsCard());
+    render(extraSectionFilmsContainer, createFilmsCard(filmsCards[i]));
   }
 }
+render(siteFooter, createPopupFilmDetails(filmsCards[0]), `afterend`);
 
-render(siteFooter, createPopupFilmDetails(), `afterend`);

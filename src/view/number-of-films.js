@@ -1,7 +1,7 @@
-export const createNumberOfFilms = () => {
+export const createNumberOfFilms = (number) => {
   return (
     `<section class="footer__statistics">
-      <p>130 291 movies inside</p>
+      <p>${number} movies inside</p>
     </section>`
   );
 };
