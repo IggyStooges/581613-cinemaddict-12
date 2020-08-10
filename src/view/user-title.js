@@ -1,4 +1,5 @@
 import {USER_TITLES} from "../const.js";
+import {createElement} from "../utils.js";
 
 const convertUserTitle = (numbersOfFilms) => {
   if (numbersOfFilms === 0) {
@@ -13,7 +14,7 @@ const convertUserTitle = (numbersOfFilms) => {
   return ``;
 };
 
-export const createUserTitle = (profile) => {
+const createUserTitle = (profile) => {
   const {numbersOfFilms, avatar} = profile;
 
   return (
@@ -23,3 +24,28 @@ export const createUserTitle = (profile) => {
       </section>`
   );
 };
+
+
+export default class UserTitle {
+  constructor(profile) {
+    this._profile = profile;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserTitle(this._profile);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

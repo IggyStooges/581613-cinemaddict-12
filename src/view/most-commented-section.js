@@ -1,4 +1,6 @@
-export const createMostCommentedFilmsExtraSection = () => {
+import {createElement} from "../utils.js";
+
+const createMostCommentedFilmsExtraSection = () => {
   return (
     `<section class="films-list--extra">
       <h2 class="films-list__title">Most commented</h2>
@@ -7,3 +9,25 @@ export const createMostCommentedFilmsExtraSection = () => {
     </section>`
   );
 };
+
+export default class MostCommentedFilmsExtraSection {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMostCommentedFilmsExtraSection();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
