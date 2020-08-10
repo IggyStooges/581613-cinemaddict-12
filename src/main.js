@@ -43,11 +43,41 @@ const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
 const TASK_COUNT_PER_STEP = 5;
 
+const renderFilm = (film) => {
+  const filmCardComponent = new FilmsCard(film);
+  const filmPopupComponent = new PopupFilmDetails(film);
+
+  const createPopup = () => {
+    render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
+    document.addEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const deletePopup = () => {
+    document.querySelector(`.film-details`).remove();
+    filmPopupComponent.removeElement();
+  };
+
+  filmCardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, createPopup);
+  filmCardComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, createPopup);
+  filmCardComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, createPopup);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      deletePopup();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  render(filmsContainer, filmCardComponent.getElement());
+};
+
 for (let i = 0; i < TASK_COUNT_PER_STEP; i++) {
-  render(filmsContainer, new FilmsCard(filmsCards[i]).getElement());
+  renderFilm(filmsCards[i]);
 }
 
 render(filmsSection, new ShowMoreButton().getElement());
+
 const loadMoreButton = filmsSection.querySelector(`.films-list__show-more`);
 let renderedFilmCount = TASK_COUNT_PER_STEP;
 
@@ -55,7 +85,7 @@ loadMoreButton.addEventListener(`click`, (e) => {
   e.preventDefault();
   filmsCards
     .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)
-    .forEach((card) => render(filmsContainer, new FilmsCard(card).getElement()));
+    .forEach((card) => renderFilm(card));
 
   renderedFilmCount += TASK_COUNT_PER_STEP;
 
@@ -76,6 +106,3 @@ for (const section of extraSections) {
     render(extraSectionFilmsContainer, new FilmsCard(filmsCards[i]).getElement());
   }
 }
-
-render(siteFooter, new PopupFilmDetails(filmsCards[0]).getElement(), RenderPosition.AFTEREND);
-
