@@ -43,7 +43,7 @@ const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
 const TASK_COUNT_PER_STEP = 5;
 
-const renderFilm = (film) => {
+const renderFilm = (film, containerElement = filmsContainer) => {
   const filmCardComponent = new FilmsCard(film);
   const filmPopupComponent = new PopupFilmDetails(film);
 
@@ -69,7 +69,7 @@ const renderFilm = (film) => {
     }
   };
 
-  render(filmsContainer, filmCardComponent.getElement());
+  render(containerElement, filmCardComponent.getElement());
 };
 
 for (let i = 0; i < TASK_COUNT_PER_STEP; i++) {
@@ -103,6 +103,7 @@ for (const section of extraSections) {
   const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
   for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-    render(extraSectionFilmsContainer, new FilmsCard(filmsCards[i]).getElement());
+    renderFilm(filmsCards[i], extraSectionFilmsContainer)
+    // render(extraSectionFilmsContainer, new FilmsCard(filmsCards[i]).getElement());
   }
 }
