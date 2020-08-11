@@ -15,6 +15,7 @@ import {generateProfile} from "./mock/profile.js";
 import {render} from "./utils.js";
 import {MOVIES_COUNT} from "./mock/allmovies.js";
 import {RenderPosition} from "./utils.js";
+import {getRandomInteger} from "./utils.js";
 
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
@@ -48,11 +49,18 @@ const renderFilm = (film, containerElement = filmsContainer) => {
   const filmPopupComponent = new PopupFilmDetails(film);
 
   const createPopup = () => {
+    const popup = document.querySelector(`.film-details`);
+    if (popup) {
+      document.querySelector(`.film-details`).remove();
+      filmPopupComponent.removeElement();
+    }
+
     render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
-    document.addEventListener(`keydown`, onEscKeyDown);
+    filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, deletePopup);
   };
 
-  const deletePopup = () => {
+  const deletePopup = (e) => {
+    e.preventDefault();
     document.querySelector(`.film-details`).remove();
     filmPopupComponent.removeElement();
   };
@@ -60,14 +68,6 @@ const renderFilm = (film, containerElement = filmsContainer) => {
   filmCardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, createPopup);
   filmCardComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, createPopup);
   filmCardComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, createPopup);
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      evt.preventDefault();
-      deletePopup();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
 
   render(containerElement, filmCardComponent.getElement());
 };
@@ -103,7 +103,6 @@ for (const section of extraSections) {
   const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
   for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-    renderFilm(filmsCards[i], extraSectionFilmsContainer)
-    // render(extraSectionFilmsContainer, new FilmsCard(filmsCards[i]).getElement());
+    renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
   }
 }
