@@ -17,7 +17,6 @@ import {MOVIES_COUNT} from "./mock/allmovies.js";
 import {RenderPosition} from "./utils.js";
 import {getRandomInteger} from "./utils.js";
 
-
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
 
@@ -50,24 +49,33 @@ const renderFilm = (film, containerElement = filmsContainer) => {
 
   const createPopup = () => {
     const popup = document.querySelector(`.film-details`);
+    document.addEventListener(`keydown`, onEscKeyDown);
+
     if (popup) {
-      document.querySelector(`.film-details`).remove();
-      filmPopupComponent.removeElement();
+      deletePopup();
     }
 
     render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
     filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, deletePopup);
   };
 
-  const deletePopup = (e) => {
-    e.preventDefault();
+  const deletePopup = () => {
     document.querySelector(`.film-details`).remove();
     filmPopupComponent.removeElement();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   filmCardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, createPopup);
   filmCardComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, createPopup);
   filmCardComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, createPopup);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      deletePopup();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
 
   render(containerElement, filmCardComponent.getElement());
 };
