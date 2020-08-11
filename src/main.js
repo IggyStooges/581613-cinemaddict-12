@@ -10,16 +10,17 @@ import TopRatedFilmsExtraSection from "./view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "./view/most-commented-section.js";
 import PopupFilmDetails from "./view/popup-details.js";
 import NoFilmsMessage from "./view/no-film-message.js";
-import { generateFilm } from "./mock/film.js";
-import { generateFilters } from "./mock/filter.js";
-import { generateProfile } from "./mock/profile.js";
-import { render } from "./utils.js";
-import { MOVIES_COUNT } from "./mock/allmovies.js";
-import { RenderPosition } from "./utils.js";
-import { getRandomInteger } from "./utils.js";
+import {generateFilm} from "./mock/film.js";
+import {generateFilters} from "./mock/filter.js";
+import {generateProfile} from "./mock/profile.js";
+import {render} from "./utils.js";
+import {MOVIES_COUNT} from "./mock/allmovies.js";
+import {RenderPosition} from "./utils.js";
+import {getRandomInteger} from "./utils.js";
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
+const TASK_COUNT_PER_STEP = 5;
 
 const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
 const filters = generateFilters(filmsCards);
@@ -46,8 +47,10 @@ const createNoDataMessage = () => {
   render(filmsSection, new NoFilmsMessage().getElement());
 };
 
-const popupHandler = (getPopup, removePopup) => {
-  const closeElement = getPopup.querySelector(`.film-details__close-btn`);
+const popupHandler = (film, PopupComponent = PopupFilmDetails) => {
+  const filmPopupComponent = new PopupComponent(film);
+
+  const closeElement = filmPopupComponent.getElement().querySelector(`.film-details__close-btn`);
 
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -59,7 +62,7 @@ const popupHandler = (getPopup, removePopup) => {
 
   const deletePopup = () => {
     document.querySelector(`.film-details`).remove();
-    removePopup;
+    filmPopupComponent.removeElement();
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
@@ -71,7 +74,7 @@ const popupHandler = (getPopup, removePopup) => {
       deletePopup();
     }
 
-    render(siteFooter, getPopup, RenderPosition.AFTEREND);
+    render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
 
     closeElement.addEventListener(`click`, deletePopup);
   };
@@ -81,11 +84,9 @@ const popupHandler = (getPopup, removePopup) => {
 
 const renderFilm = (film, containerElement = filmsContainer) => {
   const filmCardComponent = new FilmsCard(film);
-  const filmPopupComponent = new PopupFilmDetails(film);
-  const createPopupMethod = filmPopupComponent.getElement();
-  const removePopupMethod = filmPopupComponent.removeElement();
+
   const clickHandlerByCardElements = () => {
-    popupHandler(createPopupMethod, removePopupMethod);
+    popupHandler(film);
   };
 
   filmCardComponent
@@ -105,7 +106,6 @@ const renderFilm = (film, containerElement = filmsContainer) => {
 };
 
 const createFilmsBoard = () => {
-  const TASK_COUNT_PER_STEP = 5;
 
   if (!filmsCards.length) {
     createNoDataMessage();
@@ -140,15 +140,10 @@ const createFilmsBoard = () => {
   const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
   for (const section of extraSections) {
-    const extraSectionFilmsContainer = section.querySelector(
-      `.films-list__container`
-    );
+    const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
     for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-      renderFilm(
-        filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)],
-        extraSectionFilmsContainer
-      );
+      renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
     }
   }
 };
