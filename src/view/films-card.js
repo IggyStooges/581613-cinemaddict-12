@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const determineFavoriteClassName = (flag) => {
   const favoriteClassName = flag
     ? `film-card__controls-item--favorite film-card__controls-item--active`
@@ -29,7 +31,7 @@ const calculateRatingColor = (rating) => {
   }
 };
 
-export const createFilmsCard = (film) => {
+const createFilmsCard = (film) => {
   const {descriptions,
     poster,
     title,
@@ -62,3 +64,26 @@ export const createFilmsCard = (film) => {
     </article>`
   );
 };
+
+export default class FilmsCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmsCard(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

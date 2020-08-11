@@ -1,3 +1,5 @@
+import {createElement} from "../utils.js";
+
 const fillCommentsList = (comments) => {
   let commentsList = ``;
   for (let comment of comments) {
@@ -26,7 +28,7 @@ const fillGenresList = (genres) => {
   return genresList;
 };
 
-export const createPopupFilmDetails = (film) => {
+const createPopupFilmDetails = (film) => {
   const {
     descriptions,
     poster,
@@ -45,7 +47,7 @@ export const createPopupFilmDetails = (film) => {
     genres,
   } = film;
 
-  return `<section class="film-details" style="display:none">
+  return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
         <div class="form-details__top-container">
           <div class="film-details__close">
@@ -147,3 +149,26 @@ export const createPopupFilmDetails = (film) => {
       </form>
     </section>`;
 };
+export default class PopupFilmDetails {
+  constructor(film) {
+    this._film = film;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopupFilmDetails(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
