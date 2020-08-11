@@ -10,13 +10,13 @@ import TopRatedFilmsExtraSection from "./view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "./view/most-commented-section.js";
 import PopupFilmDetails from "./view/popup-details.js";
 import NoFilmsMessage from "./view/no-film-message.js";
-import { generateFilm } from "./mock/film.js";
-import { generateFilters } from "./mock/filter.js";
-import { generateProfile } from "./mock/profile.js";
-import { render } from "./utils.js";
-import { MOVIES_COUNT } from "./mock/allmovies.js";
-import { RenderPosition } from "./utils.js";
-import { getRandomInteger } from "./utils.js";
+import {generateFilm} from "./mock/film.js";
+import {generateFilters} from "./mock/filter.js";
+import {generateProfile} from "./mock/profile.js";
+import {render} from "./utils.js";
+import {MOVIES_COUNT} from "./mock/allmovies.js";
+import {RenderPosition} from "./utils.js";
+import {getRandomInteger} from "./utils.js";
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
@@ -57,11 +57,7 @@ const createFilmsBoard = () => {
         deletePopup();
       }
 
-      render(
-        siteFooter,
-        filmPopupComponent.getElement(),
-        RenderPosition.AFTEREND
-      );
+      render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
       filmPopupComponent
         .getElement()
         .querySelector(`.film-details__close-btn`)
@@ -126,25 +122,20 @@ const createFilmsBoard = () => {
   const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
   for (const section of extraSections) {
-    const extraSectionFilmsContainer = section.querySelector(
-      `.films-list__container`
-    );
+    const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
     for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-      renderFilm(
-        filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)],
-        extraSectionFilmsContainer
-      );
+      renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
     }
   }
 };
 
 const createNoDataMessage = () => {
   render(filmsSection, new NoFilmsMessage().getElement());
-}
+};
 
 if (!filmsCards.length) {
-  createNoDataMessage()
+  createNoDataMessage();
 } else {
   createFilmsBoard();
 }
