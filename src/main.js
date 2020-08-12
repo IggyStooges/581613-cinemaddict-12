@@ -9,6 +9,7 @@ import ShowMoreButton from "./view/show-more-button.js";
 import TopRatedFilmsExtraSection from "./view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "./view/most-commented-section.js";
 import PopupFilmDetails from "./view/popup-details.js";
+import NoFilmsMessage from "./view/no-film-message.js";
 import {generateFilm} from "./mock/film.js";
 import {generateFilters} from "./mock/filter.js";
 import {generateProfile} from "./mock/profile.js";
@@ -17,9 +18,9 @@ import {MOVIES_COUNT} from "./mock/allmovies.js";
 import {RenderPosition} from "./utils.js";
 import {getRandomInteger} from "./utils.js";
 
-
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
+const TASK_COUNT_PER_STEP = 5;
 
 const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
 const filters = generateFilters(filmsCards);
@@ -42,67 +43,109 @@ render(filmsBoard, new FilmsSection().getElement());
 const filmsSection = filmsBoard.querySelector(`.films-list`);
 const filmsContainer = filmsSection.querySelector(`.films-list__container`);
 
-const TASK_COUNT_PER_STEP = 5;
+const createNoDataMessage = () => {
+  render(filmsSection, new NoFilmsMessage().getElement());
+};
+
+const popupHandler = (film) => {
+  const filmPopupComponent = new PopupFilmDetails(film);
+  const filmPopupElement = filmPopupComponent.getElement();
+
+  const closeElement = filmPopupElement
+    .querySelector(`.film-details__close-btn`);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      deletePopup();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const deletePopup = () => {
+    filmPopupElement.remove();
+    filmPopupComponent.removeElement();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  };
+
+  const createPopup = () => {
+
+    if (filmPopupElement) {
+      deletePopup();
+    }
+
+    render(siteFooter, filmPopupElement, RenderPosition.AFTEREND);
+
+    document.addEventListener(`keydown`, onEscKeyDown);
+    closeElement.addEventListener(`click`, deletePopup);
+  };
+
+  createPopup();
+};
 
 const renderFilm = (film, containerElement = filmsContainer) => {
   const filmCardComponent = new FilmsCard(film);
-  const filmPopupComponent = new PopupFilmDetails(film);
+  const filmCardElement = filmCardComponent.getElement();
 
-  const createPopup = () => {
-    const popup = document.querySelector(`.film-details`);
-    if (popup) {
-      document.querySelector(`.film-details`).remove();
-      filmPopupComponent.removeElement();
-    }
-
-    render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
-    filmPopupComponent.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, deletePopup);
-  };
-
-  const deletePopup = (e) => {
-    e.preventDefault();
-    document.querySelector(`.film-details`).remove();
-    filmPopupComponent.removeElement();
-  };
-
-  filmCardComponent.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, createPopup);
-  filmCardComponent.getElement().querySelector(`.film-card__title`).addEventListener(`click`, createPopup);
-  filmCardComponent.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, createPopup);
+  filmCardElement
+    .querySelector(`.film-card__poster`)
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
+  filmCardElement
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
+  filmCardElement
+    .querySelector(`.film-card__comments`)
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
 
   render(containerElement, filmCardComponent.getElement());
 };
 
-for (let i = 0; i < TASK_COUNT_PER_STEP; i++) {
-  renderFilm(filmsCards[i]);
-}
-
-render(filmsSection, new ShowMoreButton().getElement());
-
-const loadMoreButton = filmsSection.querySelector(`.films-list__show-more`);
-let renderedFilmCount = TASK_COUNT_PER_STEP;
-
-loadMoreButton.addEventListener(`click`, (e) => {
-  e.preventDefault();
-  filmsCards
-    .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)
-    .forEach((card) => renderFilm(card));
-
-  renderedFilmCount += TASK_COUNT_PER_STEP;
-
-  if (renderedFilmCount >= filmsCards.length) {
-    loadMoreButton.remove();
+const createFilmsBoard = () => {
+  if (!filmsCards.length) {
+    createNoDataMessage();
+    return;
   }
-});
 
-render(filmsBoard, new TopRatedFilmsExtraSection().getElement());
-render(filmsBoard, new MostCommentedFilmsExtraSection().getElement());
-
-const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
-
-for (const section of extraSections) {
-  const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
-
-  for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-    renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
+  for (let i = 0; i < TASK_COUNT_PER_STEP; i++) {
+    renderFilm(filmsCards[i]);
   }
-}
+
+  render(filmsSection, new ShowMoreButton().getElement());
+
+  const loadMoreButton = filmsSection.querySelector(`.films-list__show-more`);
+  let renderedFilmCount = TASK_COUNT_PER_STEP;
+
+  loadMoreButton.addEventListener(`click`, (e) => {
+    e.preventDefault();
+    filmsCards
+      .slice(renderedFilmCount, renderedFilmCount + TASK_COUNT_PER_STEP)
+      .forEach((card) => renderFilm(card));
+
+    renderedFilmCount += TASK_COUNT_PER_STEP;
+
+    if (renderedFilmCount >= filmsCards.length) {
+      loadMoreButton.remove();
+    }
+  });
+
+  render(filmsBoard, new TopRatedFilmsExtraSection().getElement());
+  render(filmsBoard, new MostCommentedFilmsExtraSection().getElement());
+
+  const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
+
+  for (const section of extraSections) {
+    const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
+
+    for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
+      renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
+    }
+  }
+};
+
+createFilmsBoard();
