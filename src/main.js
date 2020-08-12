@@ -10,13 +10,13 @@ import TopRatedFilmsExtraSection from "./view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "./view/most-commented-section.js";
 import PopupFilmDetails from "./view/popup-details.js";
 import NoFilmsMessage from "./view/no-film-message.js";
-import {generateFilm} from "./mock/film.js";
-import {generateFilters} from "./mock/filter.js";
-import {generateProfile} from "./mock/profile.js";
-import {render} from "./utils.js";
-import {MOVIES_COUNT} from "./mock/allmovies.js";
-import {RenderPosition} from "./utils.js";
-import {getRandomInteger} from "./utils.js";
+import { generateFilm } from "./mock/film.js";
+import { generateFilters } from "./mock/filter.js";
+import { generateProfile } from "./mock/profile.js";
+import { render } from "./utils.js";
+import { MOVIES_COUNT } from "./mock/allmovies.js";
+import { RenderPosition } from "./utils.js";
+import { getRandomInteger } from "./utils.js";
 
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 const NUMBER_OF_GENERATED_CARD = 22;
@@ -47,10 +47,12 @@ const createNoDataMessage = () => {
   render(filmsSection, new NoFilmsMessage().getElement());
 };
 
-const popupHandler = (film, PopupComponent = PopupFilmDetails) => {
-  const filmPopupComponent = new PopupComponent(film);
+const popupHandler = (film) => {
+  const filmPopupComponent = new PopupFilmDetails(film);
+  const filmPopupElement = filmPopupComponent.getElement();
 
-  const closeElement = filmPopupComponent.getElement().querySelector(`.film-details__close-btn`);
+  const closeElement = filmPopupElement
+    .querySelector(`.film-details__close-btn`);
 
   const onEscKeyDown = (evt) => {
     if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -61,21 +63,20 @@ const popupHandler = (film, PopupComponent = PopupFilmDetails) => {
   };
 
   const deletePopup = () => {
-    document.querySelector(`.film-details`).remove();
+    filmPopupElement.remove();
     filmPopupComponent.removeElement();
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
   const createPopup = () => {
-    const popup = document.querySelector(`.film-details`);
-    document.addEventListener(`keydown`, onEscKeyDown);
 
-    if (popup) {
+    if (filmPopupElement) {
       deletePopup();
     }
 
-    render(siteFooter, filmPopupComponent.getElement(), RenderPosition.AFTEREND);
+    render(siteFooter, filmPopupElement, RenderPosition.AFTEREND);
 
+    document.addEventListener(`keydown`, onEscKeyDown);
     closeElement.addEventListener(`click`, deletePopup);
   };
 
@@ -84,29 +85,28 @@ const popupHandler = (film, PopupComponent = PopupFilmDetails) => {
 
 const renderFilm = (film, containerElement = filmsContainer) => {
   const filmCardComponent = new FilmsCard(film);
+  const filmCardElement = filmCardComponent.getElement();
 
-  const clickHandlerByCardElements = () => {
-    popupHandler(film);
-  };
-
-  filmCardComponent
-    .getElement()
+  filmCardElement
     .querySelector(`.film-card__poster`)
-    .addEventListener(`click`, clickHandlerByCardElements);
-  filmCardComponent
-    .getElement()
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
+  filmCardElement
     .querySelector(`.film-card__title`)
-    .addEventListener(`click`, clickHandlerByCardElements);
-  filmCardComponent
-    .getElement()
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
+  filmCardElement
     .querySelector(`.film-card__comments`)
-    .addEventListener(`click`, clickHandlerByCardElements);
+    .addEventListener(`click`, () => {
+      popupHandler(film);
+    });
 
   render(containerElement, filmCardComponent.getElement());
 };
 
 const createFilmsBoard = () => {
-
   if (!filmsCards.length) {
     createNoDataMessage();
     return;
@@ -140,10 +140,15 @@ const createFilmsBoard = () => {
   const extraSections = filmsBoard.querySelectorAll(`.films-list--extra`);
 
   for (const section of extraSections) {
-    const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
+    const extraSectionFilmsContainer = section.querySelector(
+      `.films-list__container`
+    );
 
     for (let i = 0; i < EXTRA_SECTIONS_FILMS_COUNT; i++) {
-      renderFilm(filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)], extraSectionFilmsContainer);
+      renderFilm(
+        filmsCards[getRandomInteger(i, NUMBER_OF_GENERATED_CARD)],
+        extraSectionFilmsContainer
+      );
     }
   }
 };
