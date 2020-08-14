@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createShowMoreButton = () => {
   return (
@@ -6,24 +6,8 @@ const createShowMoreButton = () => {
   );
 };
 
-export default class NoFilmsMessage {
-  constructor() {
-    this._element = null;
-  }
-
+export default class NoFilmsMessage extends AbstractView{
   getTemplate() {
     return createShowMoreButton();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

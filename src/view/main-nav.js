@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const createMainNav = (data) => {
   const {watchedFilmsNumber, watchListsFilmsNumber, favoriteListsFilmsNumber} = data;
@@ -15,26 +15,14 @@ const createMainNav = (data) => {
   );
 };
 
-export default class MainNav {
+export default class MainNav extends  AbstractView{
   constructor(data) {
+    super();
     this._data = data;
-    this._element = null;
   }
 
   getTemplate() {
     return createMainNav(this._data);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
