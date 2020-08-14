@@ -48,9 +48,7 @@ const createFilmsCard = (film) => {
 
   return `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
-      <p class="film-card__rating film-card__rating--${calculateRatingColor(
-        rating
-      )}">${rating}</p>
+      <p class="film-card__rating film-card__rating--${calculateRatingColor(rating)}">${rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${year}</span>
         <span class="film-card__duration">${duration}</span>
@@ -60,15 +58,9 @@ const createFilmsCard = (film) => {
       <p class="film-card__description">${descriptions}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
-        <button class="film-card__controls-item button ${determineWatcListClassName(
-          isWatchList
-        )}">Add to watchlist</button>
-        <button class="film-card__controls-item button ${determineWatchedClassName(
-          isWatched
-        )}">Mark as watched</button>
-        <button class="film-card__controls-item button ${determineFavoriteClassName(
-          isFavorite
-        )}">Mark as favorite</button>
+        <button class="film-card__controls-item button ${determineWatcListClassName(isWatchList)}">Add to watchlist</button>
+        <button class="film-card__controls-item button ${determineWatchedClassName(isWatched)}">Mark as watched</button>
+        <button class="film-card__controls-item button ${determineFavoriteClassName(isFavorite)}">Mark as favorite</button>
       </form>
     </article>`;
 };
@@ -91,7 +83,7 @@ export default class FilmsCard extends AbstractView {
   }
 
   setClickHandler(elementQuery, callback) {
-    this._callback.click =  callback;
+    this._callback.click = callback;
 
     this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
   }

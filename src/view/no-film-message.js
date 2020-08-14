@@ -6,7 +6,7 @@ const createShowMoreButton = () => {
   );
 };
 
-export default class NoFilmsMessage extends AbstractView{
+export default class NoFilmsMessage extends AbstractView {
   getTemplate() {
     return createShowMoreButton();
   }

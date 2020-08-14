@@ -10,7 +10,7 @@ const createMostCommentedFilmsExtraSection = () => {
   );
 };
 
-export default class MostCommentedFilmsExtraSection extends AbstractView{
+export default class MostCommentedFilmsExtraSection extends AbstractView {
   getTemplate() {
     return createMostCommentedFilmsExtraSection();
   }

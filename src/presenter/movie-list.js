@@ -1,5 +1,5 @@
 import {getRandomInteger} from "../utils/utils.js";
-import {render} from "../utils/render.js";
+import {render, remove} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
 import FilmsCard from "../view/films-card.js";
 import ShowMoreButton from "../view/show-more-button.js";
@@ -17,7 +17,7 @@ export default class MovieList {
     this._renderedFilmCount = FILM_COUNT_PER_STEP;
     this._extraSectionFilmCount = EXTRA_SECTIONS_FILMS_COUNT;
     this._filmsSection = new FilmsSection();
-    this._NoDataMessage = new NoFilmsMessage();
+    this._NoFilmsMessage = new NoFilmsMessage();
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
 
@@ -37,25 +37,25 @@ export default class MovieList {
     render(this._filmsBoard, this._filmsSection);
   }
 
-  _renderNoDataMessage() {
-    render(this._filmsSection, this._NoDataMessage);
-  };
+  _renderNoFilmsMessage() {
+    render(this._filmsSection, this._NoFilmsMessage);
+  }
 
   _renderFilm(film, containerElement = this._filmsContainer) {
     const filmCardComponent = new FilmsCard(film);
 
     filmCardComponent.setClickHandler(`.film-card__comments`, () => {
-      this._renderPopup(film)
+      this._renderPopup(film);
     });
     filmCardComponent.setClickHandler(`.film-card__title`, () => {
-      this._renderPopup(film)
+      this._renderPopup(film);
     });
     filmCardComponent.setClickHandler(`.film-card__poster`, () => {
-      this._renderPopup(film)
+      this._renderPopup(film);
     });
 
     render(containerElement, filmCardComponent);
-  };
+  }
 
   _renderPopup(film) {
     const filmPopupComponent = new PopupFilmDetails(film);
@@ -131,7 +131,7 @@ export default class MovieList {
 
   _renderFilmsBoard() {
     if (!this._filmsCards.length) {
-      createNoDataMessage();
+      this._renderNoFilmsMessage();
       return;
     }
 

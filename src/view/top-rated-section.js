@@ -9,7 +9,7 @@ const createTopRatedFilmsExtraSection = () => {
     </section>`
   );
 };
-export default class TopRatedFilmsExtraSection extends AbstractView{
+export default class TopRatedFilmsExtraSection extends AbstractView {
   getTemplate() {
     return createTopRatedFilmsExtraSection();
   }

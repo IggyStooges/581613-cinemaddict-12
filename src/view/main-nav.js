@@ -15,7 +15,7 @@ const createMainNav = (data) => {
   );
 };
 
-export default class MainNav extends  AbstractView{
+export default class MainNav extends AbstractView {
   constructor(data) {
     super();
     this._data = data;
