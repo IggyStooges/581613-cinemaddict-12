@@ -1,6 +1,5 @@
 import UserTitle from "./view/user-title.js";
 import MainNav from "./view/main-nav.js";
-import SortMenu from "./view/sort-menu.js";
 import FilmsBoard from "./view/films-board.js";
 import MovieList from "./presenter/movie-list.js";
 import NumberOfFilms from "./view/number-of-films.js";
@@ -25,7 +24,6 @@ const filmsBoard = new FilmsBoard().getElement();
 
 render(siteHeader, new UserTitle(profile));
 render(siteMain, new MainNav(filters), RenderPosition.AFTERBEGIN);
-render(siteMain, new SortMenu());
 render(siteMain, filmsBoard);
 render(siteFooter, new NumberOfFilms(MOVIES_COUNT));
 
