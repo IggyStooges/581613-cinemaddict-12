@@ -18,6 +18,7 @@ export default class MovieList {
     this._extraSectionFilmCount = EXTRA_SECTIONS_FILMS_COUNT;
     this._filmsSection = new FilmsSection();
     this._NoFilmsMessage = new NoFilmsMessage();
+    this._loadMoreButton = new ShowMoreButton();
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
 
@@ -101,16 +102,14 @@ export default class MovieList {
     this._renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this._renderedFilmCount >= this._filmsCards.length) {
-      remove(this._loadMoreButtonComponent);
+      remove(this._loadMoreButton);
     }
   }
 
   _renderLoadMoreButton() {
-    const loadMoreButton = new ShowMoreButton();
+    render(this._filmsSection, this._loadMoreButton);
 
-    render(this._filmsSection, loadMoreButton.getElement());
-
-    loadMoreButton.setClickHandler(this._handleLoadMoreButtonClick);
+    this._loadMoreButton.setClickHandler(this._handleLoadMoreButtonClick);
   }
 
   _renderExtraSections() {

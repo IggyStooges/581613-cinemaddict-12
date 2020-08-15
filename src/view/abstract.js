@@ -7,7 +7,7 @@ export default class AbstractView {
     }
 
     this._element = null;
-    this._callback = {};
+    this._callback = null;
   }
 
   getTemplate() {
