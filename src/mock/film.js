@@ -111,7 +111,7 @@ export const generateFilm = () => {
     descriptions: generateDescriptions(),
     rating: generateRating(),
     year: getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear()),
-    date: generateDate().toLocaleString(`en-JM`, {month: `long`, day: `numeric`}),
+    date: generateDate(),
     duration: generateDuration(),
     isWatched: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1)),
