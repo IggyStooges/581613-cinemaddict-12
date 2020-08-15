@@ -1,9 +1,9 @@
-import {getRandomInteger} from "../utils.js";
+import {getRandomInteger} from "../utils//utils.js";
 import {generateComments} from "./comment.js";
-import {generateManName} from "../utils.js";
-import {generateRandomStringFromArray} from "../utils.js";
-import {generateDate} from "../utils.js";
-import {generateSetByArray} from "../utils.js";
+import {generateManName} from "../utils/utils.js";
+import {generateRandomStringFromArray} from "../utils//utils.js";
+import {generateDate} from "../utils/utils.js";
+import {generateSetByArray} from "../utils/utils.js";
 
 const FIRST_FILM_YEAR = 1895;
 

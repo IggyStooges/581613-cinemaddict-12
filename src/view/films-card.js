@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractView from "./abstract.js";
 
 const determineFavoriteClassName = (flag) => {
   const favoriteClassName = flag
@@ -32,7 +32,8 @@ const calculateRatingColor = (rating) => {
 };
 
 const createFilmsCard = (film) => {
-  const {descriptions,
+  const {
+    descriptions,
     poster,
     title,
     rating,
@@ -42,10 +43,10 @@ const createFilmsCard = (film) => {
     isFavorite,
     isWatchList,
     comments,
-    genres} = film;
+    genres,
+  } = film;
 
-  return (
-    `<article class="film-card">
+  return `<article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating film-card__rating--${calculateRatingColor(rating)}">${rating}</p>
       <p class="film-card__info">
@@ -61,29 +62,29 @@ const createFilmsCard = (film) => {
         <button class="film-card__controls-item button ${determineWatchedClassName(isWatched)}">Mark as watched</button>
         <button class="film-card__controls-item button ${determineFavoriteClassName(isFavorite)}">Mark as favorite</button>
       </form>
-    </article>`
-  );
+    </article>`;
 };
 
-export default class FilmsCard {
+export default class FilmsCard extends AbstractView {
   constructor(film) {
+    super();
+
     this._film = film;
-    this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmsCard(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(elementQuery, callback) {
+    this._callback = callback;
+
+    this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
   }
 }

@@ -1,6 +1,6 @@
-import {getRandomInteger} from "../utils.js";
-import {generateManName} from "../utils.js";
-import {generateDate} from "../utils.js";
+import {getRandomInteger} from "../utils/utils.js";
+import {generateManName} from "../utils/utils.js";
+import {generateDate} from "../utils/utils.js";
 
 const MAX_COMMENTS = 5;
 
