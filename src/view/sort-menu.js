@@ -28,9 +28,9 @@ export default class SortMenu extends AbstractView {
     }
 
     evt.preventDefault();
-    this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
+    this.getElement().querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
 
-    evt.target.classList.add('sort__button--active');
+    evt.target.classList.add(`sort__button--active`);
     this._callback(evt.target.dataset.sortType);
   }
 
