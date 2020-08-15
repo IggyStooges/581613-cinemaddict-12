@@ -40,7 +40,6 @@ const createPopupFilmDetails = (film) => {
     author,
     writers,
     actors,
-    year,
     date,
     duration,
     country,
@@ -83,7 +82,7 @@ const createPopupFilmDetails = (film) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${date.toLocaleString(`en-JM`, {month: `long`, day: `numeric`})} ${year}</td>
+                  <td class="film-details__cell">${date.toLocaleString(`en-JM`, {month: `long`, day: `numeric`, year: `numeric`})}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>

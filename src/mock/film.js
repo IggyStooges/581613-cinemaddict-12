@@ -7,6 +7,10 @@ import {generateSetByArray} from "../utils/utils.js";
 
 const FIRST_FILM_YEAR = 1895;
 
+const generateYear = () => {
+  return getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear());
+};
+
 const generateRating = () => {
   return getRandomInteger(10, 100) / 10;
 };
@@ -49,6 +53,13 @@ const generatePoster = () => {
   ];
 
   return generateRandomStringFromArray(posterPaths);
+};
+
+const generateFullDate = () => {
+  const date = generateDate();
+  date.setYear(generateYear());
+
+  return date;
 };
 
 const generateDescriptions = () => {
@@ -110,8 +121,7 @@ export const generateFilm = () => {
     poster: generatePoster(),
     descriptions: generateDescriptions(),
     rating: generateRating(),
-    year: getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear()),
-    date: generateDate(),
+    date: generateFullDate(),
     duration: generateDuration(),
     isWatched: Boolean(getRandomInteger(0, 1)),
     isFavorite: Boolean(getRandomInteger(0, 1)),
