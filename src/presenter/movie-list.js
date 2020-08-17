@@ -5,12 +5,12 @@ import FilmsCard from "../view/films-card.js";
 import ShowMoreButton from "../view/show-more-button.js";
 import TopRatedFilmsExtraSection from "../view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "../view/most-commented-section.js";
-import PopupFilmDetails from "../view/popup-details.js";
 import NoFilmsMessage from "../view/no-film-message.js";
 import SortMenu from "../view/sort-menu.js";
 import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating} from "../utils/films.js";
 import {SortType} from "../const.js";
+import PopupPresenter from "./popup.js";
 
 const FILM_COUNT_PER_STEP = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
@@ -59,53 +59,19 @@ export default class MovieList {
 
   _renderFilm(film, containerElement = this._filmsContainer) {
     const filmCardComponent = new FilmsCard(film);
+    const popupPresenter = new PopupPresenter(this._filmsBoard)
 
     filmCardComponent.setClickHandler(`.film-card__comments`, () => {
-      this._renderPopup(film);
+      popupPresenter.init(film);
     });
     filmCardComponent.setClickHandler(`.film-card__title`, () => {
-      this._renderPopup(film);
+      popupPresenter.init(film);
     });
     filmCardComponent.setClickHandler(`.film-card__poster`, () => {
-      this._renderPopup(film);
+      popupPresenter.init(film);
     });
 
     render(containerElement, filmCardComponent);
-  }
-
-  _renderPopup(film) {
-    const filmPopupComponent = new PopupFilmDetails(film);
-    const filmPopupElement = filmPopupComponent.getElement();
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        deletePopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const deletePopup = () => {
-      filmPopupElement.remove();
-      filmPopupComponent.removeElement();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const createPopup = () => {
-      if (filmPopupElement) {
-        deletePopup();
-      }
-
-      render(this._filmsBoard, filmPopupElement);
-
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, () => {
-      deletePopup();
-    });
-
-    createPopup();
   }
 
   _renderFilms(from, to) {
