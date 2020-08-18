@@ -5,3 +5,9 @@ export const SortType = {
   DATE: `date`,
   RATING: `rating`
 };
+
+export const usersActivitys = {
+  FAVORITE: `favorite`,
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+}

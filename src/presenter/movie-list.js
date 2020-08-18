@@ -10,6 +10,7 @@ import SortMenu from "../view/sort-menu.js";
 import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating} from "../utils/films.js";
 import {SortType} from "../const.js";
+import {updateItem} from "../utils/utils.js";
 import PopupPresenter from "./popup.js";
 
 const FILM_COUNT_PER_STEP = 5;
@@ -25,9 +26,11 @@ export default class MovieList {
     this._loadMoreButton = new ShowMoreButton();
     this._sortMenuComponent = new SortMenu();
     this._currenSortType = SortType.DEFAULT;
+    this._popupPresenter = {};
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleTaskChange = this._handleTaskChange.bind(this);
 
     this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
   }
@@ -57,9 +60,14 @@ export default class MovieList {
     render(this._filmsSection, this._NoFilmsMessage);
   }
 
+  _handleTaskChange(updatedFilm) {
+    this._filmsCards = updateItem(this._filmsCards, updatedFilm);
+    this._sourcedFilmsCards = updateItem(this._sourcedFilmsCards, updatedFilm);
+  }
+
   _renderFilm(film, containerElement = this._filmsContainer) {
     const filmCardComponent = new FilmsCard(film);
-    const popupPresenter = new PopupPresenter(this._filmsBoard)
+    const popupPresenter = new PopupPresenter(this._filmsBoard, this._handleTaskChange);
 
     filmCardComponent.setClickHandler(`.film-card__comments`, () => {
       popupPresenter.init(film);
@@ -134,7 +142,7 @@ export default class MovieList {
       const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
       for (let i = 0; i < this._extraSectionFilmCount; i++) {
-        this._renderFilm(this._filmsCards[getRandomInteger(i, this._filmsCards.length)], extraSectionFilmsContainer);
+        this._renderFilm(this._filmsCards[getRandomInteger(i, this._filmsCards.length - 1)], extraSectionFilmsContainer);
       }
     }
   }

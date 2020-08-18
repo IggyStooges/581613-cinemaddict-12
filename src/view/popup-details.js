@@ -154,6 +154,7 @@ export default class PopupFilmDetails extends AbstractView {
 
     this._film = film;
     this._clickHandler = this._clickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -163,6 +164,16 @@ export default class PopupFilmDetails extends AbstractView {
   _clickHandler(evt) {
     evt.preventDefault();
     this._callback();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._favoriteClick();
+  }
+
+  setActivitysClickHandler(queryID, callback) {
+    this._favoriteClick = callback;
+    this.getElement().querySelector(`.film-details__control-label--${queryID}`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
   setCloseClickHandler(elementQuery, callback) {
