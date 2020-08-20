@@ -1,7 +1,6 @@
 import {getRandomInteger} from "../utils/utils.js";
 import {render, remove} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
-import FilmsCard from "../view/films-card.js";
 import ShowMoreButton from "../view/show-more-button.js";
 import TopRatedFilmsExtraSection from "../view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "../view/most-commented-section.js";
@@ -11,7 +10,7 @@ import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating} from "../utils/films.js";
 import {SortType} from "../const.js";
 import {updateItem} from "../utils/utils.js";
-import PopupPresenter from "./popup.js";
+import FilmPresenter from "./film.js";
 
 const FILM_COUNT_PER_STEP = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
@@ -26,11 +25,12 @@ export default class MovieList {
     this._loadMoreButton = new ShowMoreButton();
     this._sortMenuComponent = new SortMenu();
     this._currenSortType = SortType.DEFAULT;
-    this._popupPresenter = {};
+    this._filmPresenter = {};
+    this._filmsList = {};
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-    this._handleTaskChange = this._handleTaskChange.bind(this);
+    this._handleFilmChange = this._handleFilmChange.bind(this);
 
     this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
   }
@@ -60,26 +60,16 @@ export default class MovieList {
     render(this._filmsSection, this._NoFilmsMessage);
   }
 
-  _handleTaskChange(updatedFilm) {
+  _handleFilmChange(updatedFilm) {
     this._filmsCards = updateItem(this._filmsCards, updatedFilm);
     this._sourcedFilmsCards = updateItem(this._sourcedFilmsCards, updatedFilm);
+    this._filmPresenter[updatedFilm.id].init(updatedFilm);
   }
 
-  _renderFilm(film, containerElement = this._filmsContainer) {
-    const filmCardComponent = new FilmsCard(film);
-    const popupPresenter = new PopupPresenter(this._filmsBoard, this._handleTaskChange);
-
-    filmCardComponent.setClickHandler(`.film-card__comments`, () => {
-      popupPresenter.init(film);
-    });
-    filmCardComponent.setClickHandler(`.film-card__title`, () => {
-      popupPresenter.init(film);
-    });
-    filmCardComponent.setClickHandler(`.film-card__poster`, () => {
-      popupPresenter.init(film);
-    });
-
-    render(containerElement, filmCardComponent);
+  _renderFilm(film, container = this._filmsContainer) {
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange);
+    filmPresenter.init(film);
+    this._filmPresenter[film.id] = filmPresenter;
   }
 
   _renderFilms(from, to) {
