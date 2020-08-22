@@ -4,8 +4,8 @@ import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
 
 const Mode = {
-  CARDHANDLER: `CARD`,
-  POPUPHANDLER: `POPUP`
+  CARD: `CARD`,
+  POPUP: `POPUP`
 };
 
 export default class FilmPresenter {
@@ -14,7 +14,7 @@ export default class FilmPresenter {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
-    this._handlEmojiClick = this._handlEmojiClick.bind(this);
+    this._handleEmojiClick = this._handleEmojiClick.bind(this);
 
     this._deletePopup = this._deletePopup.bind(this);
     this._escKeyDown = this._escKeyDown.bind(this);
@@ -24,18 +24,18 @@ export default class FilmPresenter {
     this._filmComponent = null;
     this._filmPopupComponent = null;
 
-    this._mode = Mode.CARDHANDLER;
+    this._mode = Mode.CARD;
   }
 
   init(film, containerElement) {
     this._emoji = ` `;
 
-    const prevFilmcomponent = this._filmComponent;
-    const prevPopupcomponent = this._filmPopupComponent;
+    const prevFilmComponent = this._filmComponent;
+    const prevPopupComponent = this._filmPopupComponent;
 
     this._film = film;
-    if (prevPopupcomponent) {
-      this._emoji = prevPopupcomponent.restoreEmoji();
+    if (prevPopupComponent) {
+      this._emoji = prevPopupComponent.restoreEmoji();
     }
     this._filmPopupComponent = new PopupFilmDetails(film, this._emoji);
     this._filmComponent = new FilmsCard(film);
@@ -43,31 +43,29 @@ export default class FilmPresenter {
 
     this._renderFilm(film, containerElement);
 
-    if (prevPopupcomponent === null && prevFilmcomponent === null) {
+    if (prevPopupComponent === null && prevFilmComponent === null) {
       this._renderFilm(film, containerElement);
       return;
     }
 
+    replace(this._filmPopupComponent, prevPopupComponent);
+    replace(this._filmComponent, prevFilmComponent);
 
-    replace(this._filmPopupComponent, prevPopupcomponent);
-    replace(this._filmComponent, prevFilmcomponent);
-
-    if (this._mode === Mode.POPUPHANDLER) {
+    if (this._mode === Mode.POPUP) {
       this._renderPopup();
-      this._filmPopupComponent.restoreHandlers();
     }
 
-    remove(prevPopupcomponent);
-    remove(prevFilmcomponent);
+    remove(prevPopupComponent);
+    remove(prevFilmComponent);
   }
 
   resetView() {
-    if (this._mode !== Mode.CARDHANDLER) {
+    if (this._mode !== Mode.CARD) {
       this._deletePopup();
     }
   }
 
-  _handlEmojiClick(evt) {
+  _handleEmojiClick(evt) {
     render(this._filmPopupElement.querySelector(`.film-details__add-emoji-label`), evt.target);
   }
 
@@ -96,15 +94,12 @@ export default class FilmPresenter {
   }
 
   _renderFilm() {
-    this._filmComponent.setClickHandler(`.film-card__comments`, () => {
-      this._renderPopup();
+    [`.film-card__comments`, `.film-card__title`, `.film-card__poster`].forEach((query) => {
+      this._filmComponent.setClickHandler(query, () => {
+        this._renderPopup();
+      });
     });
-    this._filmComponent.setClickHandler(`.film-card__title`, () => {
-      this._renderPopup();
-    });
-    this._filmComponent.setClickHandler(`.film-card__poster`, () => {
-      this._renderPopup();
-    });
+
     this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
@@ -123,13 +118,13 @@ export default class FilmPresenter {
   _deletePopup() {
     remove(this._filmPopupComponent);
     document.removeEventListener(`keydown`, this._escKeyDown);
-    this._mode = Mode.CARDHANDLER;
+    this._mode = Mode.CARD;
   }
 
   _renderPopup() {
     this._emoji = ` `;
     this._changeMode();
-    this._mode = Mode.POPUPHANDLER;
+    this._mode = Mode.POPUP;
     render(document.querySelector(`body`), this._filmPopupComponent);
 
     document.addEventListener(`keydown`, this._escKeyDown);

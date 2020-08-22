@@ -1,7 +1,7 @@
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
 
-const EMOJIES = {
+const Emojies = {
   SMILE: `emoji-smile`,
   SLEEPING: `emoji-sleeping`,
   PUKE: `emoji-puke`,
@@ -9,32 +9,34 @@ const EMOJIES = {
 };
 
 const generateEmojiesSmile = (emoji) => {
-  const emojiesStructure = {
-    layout: ``
-  };
+
 
   switch (emoji) {
-    case ``:
-      return ``;
-    case EMOJIES.SMILE:
-      emojiesStructure.layout = `<img src="./images/emoji/smile.png" alt="emoji-smile" style="font-size:10px;" width="30" height="30">`;
-      emojiesStructure.isSmile = true;
-      break;
-    case EMOJIES.SLEEPING:
-      emojiesStructure.layout = `<img src="./images/emoji/sleeping.png" alt="emoji-sleeping" style="font-size:10px;" width="30" height="30">`;
-      emojiesStructure.isSleeping = true;
-      break;
-    case EMOJIES.PUKE:
-      emojiesStructure.layout = `<img src="./images/emoji/puke.png" alt="emoji-puke" style="font-size:10px;" width="30" height="30">`;
-      emojiesStructure.isPuke = true;
-      break;
-    case EMOJIES.ANGRY:
-      emojiesStructure.layout = `<img src="./images/emoji/angry.png" alt="emoji-angry" style="font-size:10px;" width="30" height="30">`;
-      emojiesStructure.isAngry = true;
-      break;
+    default:
+      return {
+        layout: ``
+      };
+    case Emojies.SMILE:
+      return {
+        layout: `<img src="./images/emoji/smile.png" alt="emoji-smile" style="font-size:10px;" width="30" height="30">`,
+        isSmile: true
+      };
+    case Emojies.SLEEPING:
+      return {
+        layout: `<img src="./images/emoji/sleeping.png" alt="emoji-sleeping" style="font-size:10px;" width="30" height="30">`,
+        isSleeping: true
+      };
+    case Emojies.PUKE:
+      return {
+        layout: `<img src="./images/emoji/puke.png" alt="emoji-puke" style="font-size:10px;" width="30" height="30">`,
+        isPuke: true
+      };
+    case Emojies.ANGRY:
+      return {
+        layout: `<img src="./images/emoji/angry.png" alt="emoji-angry" style="font-size:10px;" width="30" height="30">`,
+        isAngry: true
+      };
   }
-
-  return emojiesStructure;
 };
 
 const fillCommentsList = (comments) => {
@@ -230,9 +232,7 @@ export default class PopupFilmDetails extends AbstractView {
     }
 
     const emojiesStructure = generateEmojiesSmile(selectedEmojiId);
-
     const emojiesTemplate = emojiesStructure.layout;
-
     const emojiesElement = createElement(emojiesTemplate);
 
     render(element.querySelector(`.film-details__add-emoji-label`), emojiesElement);
