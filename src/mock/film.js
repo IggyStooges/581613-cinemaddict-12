@@ -7,6 +7,8 @@ import {generateSetByArray} from "../utils/utils.js";
 
 const FIRST_FILM_YEAR = 1895;
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateYear = () => {
   return getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear());
 };
@@ -116,6 +118,7 @@ const generateFewNames = () => {
 
 export const generateFilm = () => {
   return {
+    id: generateId(),
     title: generateTitle(),
     originalTitle: generateTitle(),
     poster: generatePoster(),

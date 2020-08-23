@@ -1,20 +1,15 @@
 import {getRandomInteger} from "../utils/utils.js";
 import {generateManName} from "../utils/utils.js";
 import {generateDate} from "../utils/utils.js";
+import {Emojies} from "../const.js";
 
 const MAX_COMMENTS = 5;
 
 const generateEmodji = () => {
-  const emodjiPaths = [
-    `./images/emoji/angry.png`,
-    `./images/emoji/puke.png`,
-    `./images/emoji/sleeping.png`,
-    `./images/emoji/smile.png`,
-  ];
+  const emojiesNames = Object.values(Emojies);
+  const randomIndex = getRandomInteger(0, emojiesNames.length - 1);
 
-  const randomIndex = getRandomInteger(0, emodjiPaths.length - 1);
-
-  return emodjiPaths[randomIndex];
+  return emojiesNames[randomIndex];
 };
 
 const generateText = () => {

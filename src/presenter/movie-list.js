@@ -1,16 +1,16 @@
 import {getRandomInteger} from "../utils/utils.js";
 import {render, remove} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
-import FilmsCard from "../view/films-card.js";
 import ShowMoreButton from "../view/show-more-button.js";
 import TopRatedFilmsExtraSection from "../view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "../view/most-commented-section.js";
-import PopupFilmDetails from "../view/popup-details.js";
 import NoFilmsMessage from "../view/no-film-message.js";
 import SortMenu from "../view/sort-menu.js";
 import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating} from "../utils/films.js";
 import {SortType} from "../const.js";
+import {updateItem} from "../utils/utils.js";
+import FilmPresenter from "./film.js";
 
 const FILM_COUNT_PER_STEP = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
@@ -25,9 +25,13 @@ export default class MovieList {
     this._loadMoreButton = new ShowMoreButton();
     this._sortMenuComponent = new SortMenu();
     this._currenSortType = SortType.DEFAULT;
+    this._filmPresenterList = {};
+    this._filmsList = {};
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
 
     this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
   }
@@ -57,55 +61,22 @@ export default class MovieList {
     render(this._filmsSection, this._NoFilmsMessage);
   }
 
-  _renderFilm(film, containerElement = this._filmsContainer) {
-    const filmCardComponent = new FilmsCard(film);
-
-    filmCardComponent.setClickHandler(`.film-card__comments`, () => {
-      this._renderPopup(film);
-    });
-    filmCardComponent.setClickHandler(`.film-card__title`, () => {
-      this._renderPopup(film);
-    });
-    filmCardComponent.setClickHandler(`.film-card__poster`, () => {
-      this._renderPopup(film);
-    });
-
-    render(containerElement, filmCardComponent);
+  _handleFilmChange(updatedFilm) {
+    this._filmsCards = updateItem(this._filmsCards, updatedFilm);
+    this._sourcedFilmsCards = updateItem(this._sourcedFilmsCards, updatedFilm);
+    this._filmPresenterList[updatedFilm.id].init(updatedFilm);
   }
 
-  _renderPopup(film) {
-    const filmPopupComponent = new PopupFilmDetails(film);
-    const filmPopupElement = filmPopupComponent.getElement();
+  _handleModeChange() {
+    Object
+      .values(this._filmPresenterList)
+      .forEach((presenter) => presenter.resetView());
+  }
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        deletePopup();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const deletePopup = () => {
-      filmPopupElement.remove();
-      filmPopupComponent.removeElement();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    };
-
-    const createPopup = () => {
-      if (filmPopupElement) {
-        deletePopup();
-      }
-
-      render(this._filmsBoard, filmPopupElement);
-
-      document.addEventListener(`keydown`, onEscKeyDown);
-    };
-
-    filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, () => {
-      deletePopup();
-    });
-
-    createPopup();
+  _renderFilm(film, container = this._filmsContainer) {
+    const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handleModeChange);
+    filmPresenter.init(film);
+    this._filmPresenterList[film.id] = filmPresenter;
   }
 
   _renderFilms(from, to) {
@@ -168,7 +139,7 @@ export default class MovieList {
       const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
       for (let i = 0; i < this._extraSectionFilmCount; i++) {
-        this._renderFilm(this._filmsCards[getRandomInteger(i, this._filmsCards.length)], extraSectionFilmsContainer);
+        this._renderFilm(this._filmsCards[getRandomInteger(i, this._filmsCards.length - 1)], extraSectionFilmsContainer);
       }
     }
   }
