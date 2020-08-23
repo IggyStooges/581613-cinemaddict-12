@@ -28,7 +28,7 @@ export default class FilmPresenter {
   }
 
   init(film, containerElement) {
-    this._emoji = ` `;
+    this._emoji = ``;
 
     const prevFilmComponent = this._filmComponent;
     const prevPopupComponent = this._filmPopupComponent;
@@ -122,7 +122,7 @@ export default class FilmPresenter {
   }
 
   _renderPopup() {
-    this._emoji = ` `;
+    this._emoji = ``;
     this._changeMode();
     this._mode = Mode.POPUP;
     render(document.querySelector(`body`), this._filmPopupComponent);
