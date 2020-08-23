@@ -23,7 +23,7 @@ const generateText = () => {
 const generateData = () => {
   return {
     emodji: generateEmodji(),
-    date: generateDate().toLocaleString(`en-US`, {day: `numeric`, month: `long`, year: `numeric`}),
+    date: generateDate(),
     author: generateManName(),
     text: generateText(),
   };

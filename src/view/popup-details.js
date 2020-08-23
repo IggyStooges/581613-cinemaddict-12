@@ -1,5 +1,6 @@
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
+import {parseFilmDuration, getMoment, getReleaseDate} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const fillCommentsList = (comments) => {
@@ -14,7 +15,7 @@ const fillCommentsList = (comments) => {
             <p class="film-details__comment-text">${comment.text}</p>
             <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${comment.date}</span>
+            <span class="film-details__comment-day">${getMoment(comment.date)}</span>
             <button class="film-details__comment-delete">Delete</button>
             </p>
         </div>
@@ -89,11 +90,11 @@ const createPopupFilmDetails = (film, emoji) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${date.toLocaleString(`en-JM`, {month: `long`, day: `numeric`, year: `numeric`})}</td>
+                  <td class="film-details__cell">${getReleaseDate(date)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${parseFilmDuration(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
