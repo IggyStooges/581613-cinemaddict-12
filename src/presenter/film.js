@@ -43,7 +43,7 @@ export default class FilmPresenter {
 
     this._renderFilm(film, containerElement);
 
-    if (prevPopupComponent === null && prevFilmComponent === null) {
+    if (!prevPopupComponent && !prevFilmComponent) {
       this._renderFilm(film, containerElement);
       return;
     }

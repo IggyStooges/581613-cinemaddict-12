@@ -25,7 +25,7 @@ export default class MovieList {
     this._loadMoreButton = new ShowMoreButton();
     this._sortMenuComponent = new SortMenu();
     this._currenSortType = SortType.DEFAULT;
-    this._filmPresenter = {};
+    this._filmPresenterList = {};
     this._filmsList = {};
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
@@ -64,19 +64,19 @@ export default class MovieList {
   _handleFilmChange(updatedFilm) {
     this._filmsCards = updateItem(this._filmsCards, updatedFilm);
     this._sourcedFilmsCards = updateItem(this._sourcedFilmsCards, updatedFilm);
-    this._filmPresenter[updatedFilm.id].init(updatedFilm);
+    this._filmPresenterList[updatedFilm.id].init(updatedFilm);
   }
 
   _handleModeChange() {
     Object
-      .values(this._filmPresenter)
+      .values(this._filmPresenterList)
       .forEach((presenter) => presenter.resetView());
   }
 
   _renderFilm(film, container = this._filmsContainer) {
     const filmPresenter = new FilmPresenter(container, this._handleFilmChange, this._handleModeChange);
     filmPresenter.init(film);
-    this._filmPresenter[film.id] = filmPresenter;
+    this._filmPresenterList[film.id] = filmPresenter;
   }
 
   _renderFilms(from, to) {

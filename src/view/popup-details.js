@@ -1,40 +1,32 @@
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-
-const Emojies = {
-  SMILE: `emoji-smile`,
-  SLEEPING: `emoji-sleeping`,
-  PUKE: `emoji-puke`,
-  ANGRY: `emoji-angry`
-};
+import {Emojies} from "../const.js";
 
 const generateEmojiesSmile = (emoji) => {
-
-
   switch (emoji) {
-    default:
-      return {
-        layout: ``
-      };
     case Emojies.SMILE:
       return {
-        layout: `<img src="./images/emoji/smile.png" alt="emoji-smile" style="font-size:10px;" width="30" height="30">`,
+        emojiName: Emojies.SMILE,
         isSmile: true
       };
     case Emojies.SLEEPING:
       return {
-        layout: `<img src="./images/emoji/sleeping.png" alt="emoji-sleeping" style="font-size:10px;" width="30" height="30">`,
+        emojiName: Emojies.SLEEPING,
         isSleeping: true
       };
     case Emojies.PUKE:
       return {
-        layout: `<img src="./images/emoji/puke.png" alt="emoji-puke" style="font-size:10px;" width="30" height="30">`,
+        emojiName: Emojies.PUKE,
         isPuke: true
       };
     case Emojies.ANGRY:
       return {
-        layout: `<img src="./images/emoji/angry.png" alt="emoji-angry" style="font-size:10px;" width="30" height="30">`,
+        emojiName: Emojies.ANGRY,
         isAngry: true
+      };
+    default:
+      return {
+        layout: ``
       };
   }
 };
@@ -45,7 +37,7 @@ const fillCommentsList = (comments) => {
     commentsList = commentsList.concat(
         `<li class="film-details__comment">
         <span class="film-details__comment-emoji">
-            <img src="${comment.emodji}" alt="emoji-sleeping" width="55" height="55">
+            <img src="./images/emoji/${comment.emodji}.png" alt="emoji-sleeping" width="55" height="55">
         </span>
         <div>
             <p class="film-details__comment-text">${comment.text}</p>
@@ -93,7 +85,7 @@ const createPopupFilmDetails = (film, emoji) => {
   const emojiStructure = generateEmojiesSmile(emoji);
 
   const {
-    layout,
+    emojiName,
     isSmile,
     isSleeping,
     isPuke,
@@ -175,7 +167,8 @@ const createPopupFilmDetails = (film, emoji) => {
             </ul>
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label">
-              ${layout}</div>
+              ${emojiName ? `<img src="./images/emoji/${emojiName}.png" alt="emoji-${emojiName}" style="font-size:10px;" width="30" height="30">` : ` `}
+              </div>
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
               </label>
@@ -225,18 +218,19 @@ export default class PopupFilmDetails extends AbstractView {
 
     const element = this.getElement();
 
-    const selectedEmojiId = evt.target.getAttribute(`alt`) || evt.target.getAttribute(`for`);
+    const selectedEmojiId = evt.target.getAttribute(`alt`).replace(`emoji-`, ``) || evt.target.getAttribute(`for`).replace(`emoji-`, ``);
 
-    if (element.querySelector(`.film-details__add-emoji-label`).firstElementChild) {
-      element.querySelector(`.film-details__add-emoji-label`).firstElementChild.remove();
+    const emojiContainer = element.querySelector(`.film-details__add-emoji-label`);
+    if (emojiContainer.firstElementChild) {
+      emojiContainer.firstElementChild.remove();
     }
 
     const emojiesStructure = generateEmojiesSmile(selectedEmojiId);
-    const emojiesTemplate = emojiesStructure.layout;
+    const emojiesTemplate = `<img src="./images/emoji/${emojiesStructure.emojiName}.png" alt="emoji-puke" style="font-size:10px;" width="30" height="30">`;
     const emojiesElement = createElement(emojiesTemplate);
 
-    render(element.querySelector(`.film-details__add-emoji-label`), emojiesElement);
-    element.querySelector(`#${selectedEmojiId}`).checked = true;
+    render(emojiContainer, emojiesElement);
+    element.querySelector(`#emoji-${selectedEmojiId}`).checked = true;
     this._emojie = selectedEmojiId;
   }
 
