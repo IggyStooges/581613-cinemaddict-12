@@ -82,16 +82,9 @@ const generateDescriptions = () => {
 };
 
 const generateDuration = () => {
-  const MAX_FILM_DURATION_HOURS = 10;
-  const MINUTES_IN_HOURS = 60;
+  const MAX_FILM_DURATION_IN_MINUTES = 300;
 
-  const generatedHour = getRandomInteger(0, MAX_FILM_DURATION_HOURS);
-  const generatedMinute = getRandomInteger(0, MINUTES_IN_HOURS);
-
-  const hour = generatedHour > 0 ? `${generatedHour}h` : ``;
-  const minute = generatedMinute > 0 ? `${generatedMinute}m` : ``;
-
-  return `${hour + minute}`;
+  return getRandomInteger(0, MAX_FILM_DURATION_IN_MINUTES);
 };
 
 const generateGenres = () => {

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -85,4 +87,18 @@ export const updateItem = (items, updatedItem) => {
     updatedItem,
     ...items.slice(index + 1)
   ];
+};
+
+export const parseFilmDuration = (dataDuration) => {
+  const time = moment.utc().startOf(`day`).add({minutes: dataDuration});
+  const hours = time.hour() ? `${time.hour()}h ` : ``;
+  return `${hours}${time.minutes()}m`;
+};
+
+export const getReleaseDate = (date) => {
+  return moment(date).format(`DD MMMM YYYY`);
+};
+
+export const getMoment = (commentDate) => {
+  return moment(commentDate).fromNow();
 };
