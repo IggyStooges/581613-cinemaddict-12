@@ -9,6 +9,7 @@ import {render} from "./utils/render.js";
 import {MOVIES_COUNT} from "./mock/allmovies.js";
 import {RenderPosition} from "./utils/render.js";
 import {generateFilm} from "./mock/film.js";
+import FilmsModel from "./model/films.js";
 
 const NUMBER_OF_GENERATED_CARD = 22;
 
@@ -27,5 +28,6 @@ render(siteMain, new MainNav(filters), RenderPosition.AFTERBEGIN);
 render(siteMain, filmsBoard);
 render(siteFooter, new NumberOfFilms(MOVIES_COUNT));
 
-const filmsBoardPresenter = new MovieList(filmsBoard);
-filmsBoardPresenter.init(filmsCards);
+const filmsModel = new FilmsModel();
+const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel);
+filmsBoardPresenter.init();
