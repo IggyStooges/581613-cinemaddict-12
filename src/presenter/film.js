@@ -1,5 +1,5 @@
 import {render, replace, remove} from "../utils/render.js";
-
+import {UserAction, UpdateType} from "../const.js";
 import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
 
@@ -7,7 +7,6 @@ const Mode = {
   CARD: `CARD`,
   POPUP: `POPUP`
 };
-
 export default class FilmPresenter {
   constructor(filmsBoard, changeData, changeMode) {
     this._filmsBoard = filmsBoard;
@@ -71,6 +70,8 @@ export default class FilmPresenter {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign({}, this._film, {
           isFavorite: !this._film.isFavorite,
         })
@@ -79,6 +80,8 @@ export default class FilmPresenter {
 
   _handleWatchedClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign({}, this._film, {
           isWatched: !this._film.isWatched,
         })
@@ -87,6 +90,8 @@ export default class FilmPresenter {
 
   _handleWatchlistClick() {
     this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.PATCH,
         Object.assign({}, this._film, {
           isWatchList: !this._film.isWatchList,
         })
@@ -113,6 +118,11 @@ export default class FilmPresenter {
       this._deletePopup();
       document.removeEventListener(`keydown`, this._escKeyDown);
     }
+  }
+
+  destroy() {
+    remove(this._filmComponent);
+    remove(this._filmPopupComponent);
   }
 
   _deletePopup() {
