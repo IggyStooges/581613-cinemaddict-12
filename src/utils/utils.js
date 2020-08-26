@@ -1,36 +1,5 @@
 import moment from "moment";
 
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`,
-  AFTEREND: `afterend`
-};
-
-export const render = (container, element, place = RenderPosition.BEFOREEND) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case RenderPosition.AFTEREND:
-      container.after(element);
-      break;
-  }
-};
-
-export const renderTemplate = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -75,20 +44,6 @@ export const generateDate = () => {
   return new Date(currentDate);
 };
 
-export const updateItem = (items, updatedItem) => {
-  const index = items.findIndex((item) => item.id === updatedItem.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    updatedItem,
-    ...items.slice(index + 1)
-  ];
-};
-
 export const parseFilmDuration = (dataDuration) => {
   const time = moment.utc().startOf(`day`).add({minutes: dataDuration});
   const hours = time.hour() ? `${time.hour()}h ` : ``;
@@ -101,4 +56,34 @@ export const getReleaseDate = (date) => {
 
 export const getMoment = (commentDate) => {
   return moment(commentDate).fromNow();
+};
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
+export const runOnKeys = (func, ...codes) => {
+  const pressed = new Set();
+  const fewButtonPressHandler = (event) => {
+    pressed.add(event.code);
+
+    for (let code of codes) {
+      if (!pressed.has(code)) {
+        return;
+      }
+    }
+
+    pressed.clear();
+    func();
+
+    document.removeEventListener(`keydown`, fewButtonPressHandler);
+  };
+
+  document.addEventListener(`keydown`, fewButtonPressHandler);
+
+  const keyUpHandler = (event) => {
+    pressed.delete(event.code);
+
+    document.removeEventListener(`keyup`, keyUpHandler);
+  };
+
+  document.addEventListener(`keyup`, keyUpHandler);
 };

@@ -1,13 +1,12 @@
-import {getRandomInteger} from "../utils//utils.js";
+import {getRandomInteger,
+  generateSetByArray,
+  generateDate,
+  generateRandomStringFromArray,
+  generateManName,
+  generateId} from "../utils/utils.js";
 import {generateComments} from "./comment.js";
-import {generateManName} from "../utils/utils.js";
-import {generateRandomStringFromArray} from "../utils//utils.js";
-import {generateDate} from "../utils/utils.js";
-import {generateSetByArray} from "../utils/utils.js";
 
 const FIRST_FILM_YEAR = 1895;
-
-const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateYear = () => {
   return getRandomInteger(FIRST_FILM_YEAR, new Date().getFullYear());
@@ -20,7 +19,7 @@ const generateRating = () => {
 const generateTitle = () => {
   const filmsTitles = [
     `Jay and Silent Bob Strike Back`,
-    `Любовь и голуби`,
+    `Master and Margherita`,
     `Aliens`,
     `The Big Lebowski`,
     `Snatch`,
@@ -70,9 +69,9 @@ const generateDescriptions = () => {
 
   const descriptionText = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 
-  const desriptioтSentences = descriptionText.replace(/\.$/gm, ``).split(`. `);
+  const desriptionSentences = descriptionText.replace(/\.$/gm, ``).split(`. `);
 
-  const descriptionSet = generateSetByArray(desriptioтSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
+  const descriptionSet = generateSetByArray(desriptionSentences, MAX_DESCRIPTION_NUMBER, MIN_DESCRIPTION_NUMBER);
 
   const generatedDescription = Array.from(descriptionSet).join(`. `);
 

@@ -1,9 +1,10 @@
+import he from "he";
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-import {parseFilmDuration, getMoment, getReleaseDate} from "../utils/utils.js";
+import {parseFilmDuration, getMoment, getReleaseDate, runOnKeys} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
-const fillCommentsList = (comments) => {
+const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
   for (let comment of comments) {
     commentsList = commentsList.concat(
@@ -12,11 +13,11 @@ const fillCommentsList = (comments) => {
             <img src="./images/emoji/${comment.emodji}.png" alt="emoji-sleeping" width="55" height="55">
         </span>
         <div>
-            <p class="film-details__comment-text">${comment.text}</p>
+            <p class="film-details__comment-text">${he.encode(comment.text)}</p>
             <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
             <span class="film-details__comment-day">${getMoment(comment.date)}</span>
-            <button class="film-details__comment-delete">Delete</button>
+            <button type="button" class="film-details__comment-delete" data-film-id="${filmId}" data-comment-id="${comment.id}">Delete</button>
             </p>
         </div>
         </li>`
@@ -35,6 +36,7 @@ const fillGenresList = (genres) => {
 
 const createPopupFilmDetails = (film, emoji) => {
   const {
+    id,
     descriptions,
     poster,
     title,
@@ -125,7 +127,7 @@ const createPopupFilmDetails = (film, emoji) => {
           <section class="film-details__comments-wrap">
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
             <ul class="film-details__comments-list">
-              ${fillCommentsList(comments)}
+              ${fillCommentsList(comments, id)}
             </ul>
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label">
@@ -166,13 +168,16 @@ export default class PopupFilmDetails extends AbstractView {
     this._film = film;
     this._emojie = emojie;
     this._clickHandler = this._clickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._emojiesToggleHandler = this._emojiesToggleHandler.bind(this);
-
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
+    this._deleteCommentHandler = this._deleteCommentHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._inputTextCommentHandler = this._inputTextCommentHandler.bind(this);
 
     this._enableEmojieseToggler();
+    this._setCommentTextInputHandler();
   }
 
   _emojiesToggleHandler(evt) {
@@ -203,6 +208,7 @@ export default class PopupFilmDetails extends AbstractView {
 
   restoreHandlers() {
     this._enableEmojieseToggler();
+    this._setCommentTextInputHandler();
   }
 
   restoreEmoji() {
@@ -252,5 +258,45 @@ export default class PopupFilmDetails extends AbstractView {
   setCloseClickHandler(elementQuery, callback) {
     this._callback = callback;
     this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
+  }
+
+  _deleteCommentHandler(evt) {
+    evt.preventDefault();
+    this._deleteCommentClick(evt.target.dataset.commentId);
+  }
+
+  setDeleteCommentClickHandler(callback) {
+    this._deleteCommentClick = callback;
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
+      element.addEventListener(`click`, this._deleteCommentHandler);
+    });
+  }
+
+  _formSubmitHandler() {
+    if (!this._emojie || !this._commentText) {
+      this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
+      throw new Error(`Can't submit fill comment area`);
+    } else {
+      this._formSubmit(this._emojie, this._commentText);
+    }
+  }
+
+  setFormSubmitHandler(callback) {
+    this._formSubmit = callback;
+    runOnKeys(
+        this._formSubmitHandler,
+        `ControlLeft`,
+        `Enter`
+    );
+  }
+
+  _inputTextCommentHandler(evt) {
+    evt.preventDefault();
+
+    this._commentText = evt.target.value;
+  }
+
+  _setCommentTextInputHandler() {
+    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._inputTextCommentHandler);
   }
 }

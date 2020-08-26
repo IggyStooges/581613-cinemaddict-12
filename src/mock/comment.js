@@ -1,6 +1,4 @@
-import {getRandomInteger} from "../utils/utils.js";
-import {generateManName} from "../utils/utils.js";
-import {generateDate} from "../utils/utils.js";
+import {getRandomInteger, generateId, generateManName, generateDate} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const MAX_COMMENTS = 5;
@@ -22,6 +20,7 @@ const generateText = () => {
 
 const generateData = () => {
   return {
+    id: generateId(),
     emodji: generateEmodji(),
     date: generateDate(),
     author: generateManName(),
