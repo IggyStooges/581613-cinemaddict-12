@@ -78,9 +78,6 @@ export default class MovieList {
 
   _handleViewAction(actionType, updateType, updateFilm, updateCommentData) {
     switch (actionType) {
-      case UserAction.UPDATE_FILM:
-        this._filmsModel.updateFilm(updateType, updateFilm);
-        break;
       case UserAction.REMOVE_COMMENT:
         this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
         break;
@@ -88,16 +85,13 @@ export default class MovieList {
         this._filmsModel.addComment(updateType, updateFilm, updateCommentData);
         break;
       default:
-        this._filmsModel.getFilms();
-        break
+        this._filmsModel.updateFilm(updateType, updateFilm);
+        break;
     }
   }
 
   _handleModelEvent(updateType, film) {
     switch (updateType) {
-      case UpdateType.PATCH:
-        this._filmPresenterList[film.id].init(film);
-        break;
       case UpdateType.MINOR:
         this._clearFilmsBoard();
         this._renderFilmsBoard();
@@ -105,6 +99,9 @@ export default class MovieList {
       case UpdateType.MAJOR:
         this._clearFilmsBoard({resetRenderedFilmCount: true, resetSortType: true});
         this._renderFilmsBoard();
+        break;
+      default:
+        this._filmPresenterList[film.id].init(film);
         break;
     }
   }

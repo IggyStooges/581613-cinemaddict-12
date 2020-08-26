@@ -65,7 +65,7 @@ export const runOnKeys = (func, ...codes) => {
   const fewButtonPressHandler = (event) => {
     pressed.add(event.code);
 
-    for (let code of codes) { // все ли клавиши из набора нажаты?
+    for (let code of codes) {
       if (!pressed.has(code)) {
         return;
       }
@@ -78,4 +78,12 @@ export const runOnKeys = (func, ...codes) => {
   };
 
   document.addEventListener(`keydown`, fewButtonPressHandler);
+
+  const keyUpHandler = (event) => {
+    pressed.delete(event.code);
+
+    document.removeEventListener(`keyup`, keyUpHandler);
+  };
+
+  document.addEventListener(`keyup`, keyUpHandler);
 };

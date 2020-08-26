@@ -37,14 +37,12 @@ export default class FilmsModel extends Observer {
       throw new Error(`Can't update unexisting films`);
     }
 
-    this._films[filmIndex] = {
-      ...this._films[filmIndex],
+    this._films[filmIndex] = Object.assign({}, this._films[filmIndex], {
       comments: [
         ...this._films.slice()[filmIndex].comments.slice(0, commentIndex),
         ...this._films.slice()[filmIndex].comments.slice(commentIndex + 1)
       ]
-
-    };
+    });
 
     this._notify(updateType, updateFilm);
   }
