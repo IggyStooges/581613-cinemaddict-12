@@ -4,7 +4,6 @@ export default class FilmsModel extends Observer {
   constructor() {
     super();
     this._films = [];
-
   }
 
   setFilms(films) {
@@ -34,10 +33,18 @@ export default class FilmsModel extends Observer {
   deleteComment(updateType, updateFilm, commentIndex) {
     const filmIndex = this._films.findIndex((film) => film.id === updateFilm.id);
 
-    this._films[filmIndex].comments = [
-      ...this._films[filmIndex].comments.slice(0, commentIndex),
-      ...this._films[filmIndex].comments.slice(commentIndex + 1)
-    ];
+    if (filmIndex === -1) {
+      throw new Error(`Can't update unexisting films`);
+    }
+
+    this._films[filmIndex] = {
+      ...this._films[filmIndex],
+      comments: [
+        ...this._films.slice()[filmIndex].comments.slice(0, commentIndex),
+        ...this._films.slice()[filmIndex].comments.slice(commentIndex + 1)
+      ]
+
+    };
 
     this._notify(updateType, updateFilm);
   }

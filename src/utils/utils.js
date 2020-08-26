@@ -61,7 +61,7 @@ export const getMoment = (commentDate) => {
 export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 export const runOnKeys = (func, ...codes) => {
-  let pressed = new Set();
+  const pressed = new Set();
   const fewButtonPressHandler = (event) => {
     pressed.add(event.code);
 
