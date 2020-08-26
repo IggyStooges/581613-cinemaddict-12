@@ -23,7 +23,7 @@ const filmsBoard = new FilmsBoard().getElement();
 
 render(siteHeader, new UserTitle(profile));
 
-const filtersModels = new FiltersModel();
+const filtersModel = new FiltersModel();
 
 render(siteMain, filmsBoard);
 render(siteFooter, new NumberOfFilms(MOVIES_COUNT));
@@ -31,8 +31,8 @@ render(siteFooter, new NumberOfFilms(MOVIES_COUNT));
 const filmsModel = new FilmsModel();
 filmsModel.setFilms(filmsCards);
 
-const mainNavPresenter = new MainNavPresenter(siteMain, filtersModels, filmsModel);
+const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel);
 mainNavPresenter.init();
 
-const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModels);
+const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel);
 filmsBoardPresenter.init();

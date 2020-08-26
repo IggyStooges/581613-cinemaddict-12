@@ -2,6 +2,7 @@ import {render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
+import {generateId, generateManName} from "../utils/utils.js";
 
 const Mode = {
   CARD: `CARD`,
@@ -14,6 +15,8 @@ export default class FilmPresenter {
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleEmojiClick = this._handleEmojiClick.bind(this);
+    this._handleDeleteCommentClick = this._handleDeleteCommentClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
 
     this._deletePopup = this._deletePopup.bind(this);
     this._escKeyDown = this._escKeyDown.bind(this);
@@ -75,6 +78,39 @@ export default class FilmPresenter {
         Object.assign({}, this._film, {
           isFavorite: !this._film.isFavorite,
         })
+    );
+  }
+
+  _handleDeleteCommentClick(commentId) {
+    const index = this._film.comments.findIndex((comment) => comment.id === Number(commentId));
+
+    this._changeData(
+        UserAction.REMOVE_COMMENT,
+        UpdateType.PATCH,
+        Object.assign({}, this._film, {
+          comments: [...this._film.comments.slice(0, index),
+            ...this._film.comments.slice(index + 1)]
+        }),
+        index
+    );
+  }
+
+  _handleFormSubmit(emoji, comment) {
+    const newComment = {
+      id: generateId(),
+      emodji: emoji,
+      date: new Date(),
+      author: generateManName(),
+      text: comment,
+    };
+
+    this._changeData(
+        UserAction.REMOVE_COMMENT,
+        UpdateType.PATCH,
+        Object.assign({}, this._film, {
+          comments: [...this._film.comments, newComment]
+        }),
+        newComment
     );
   }
 
@@ -144,5 +180,8 @@ export default class FilmPresenter {
     this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
     this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+    this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
+
   }
 }

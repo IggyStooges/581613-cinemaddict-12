@@ -76,10 +76,20 @@ export default class MovieList {
     render(this._filmsSection, this._NoFilmsMessage);
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _handleViewAction(actionType, updateType, updateFilm, updateCommentData) {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this._filmsModel.updateFilm(updateType, update);
+        this._filmsModel.updateFilm(updateType, updateFilm);
+        break;
+    }
+    switch (actionType) {
+      case UserAction.REMOVE_COMMENT:
+        this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
+        break;
+    }
+    switch (actionType) {
+      case UserAction.ADD_COMMENT:
+        this._filmsModel.addComment(updateType, updateFilm, updateCommentData);
         break;
     }
   }

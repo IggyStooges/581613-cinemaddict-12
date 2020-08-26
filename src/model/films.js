@@ -1,8 +1,10 @@
 import Observer from "../utils/observer.js";
+
 export default class FilmsModel extends Observer {
   constructor() {
     super();
     this._films = [];
+
   }
 
   setFilms(films) {
@@ -27,5 +29,24 @@ export default class FilmsModel extends Observer {
     ];
 
     this._notify(updateType, update);
+  }
+
+  deleteComment(updateType, updateFilm, commentIndex) {
+    const filmIndex = this._films.findIndex((film) => film.id === updateFilm.id);
+
+    this._films[filmIndex].comments = [
+      ...this._films[filmIndex].comments.slice(0, commentIndex),
+      ...this._films[filmIndex].comments.slice(commentIndex + 1)
+    ];
+
+    this._notify(updateType, updateFilm);
+  }
+
+  addComment(updateType, updateFilm, newComment) {
+    const filmIndex = this._films.findIndex((film) => film.id === updateFilm.id);
+
+    this._films[filmIndex].comments = [...this._films[filmIndex].comments, newComment];
+
+    this._notify(updateType, updateFilm);
   }
 }
