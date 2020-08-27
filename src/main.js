@@ -9,11 +9,20 @@ import {MOVIES_COUNT} from "./mock/allmovies.js";
 import {generateFilm} from "./mock/film.js";
 import FilmsModel from "./model/films.js";
 import FiltersModel from "./model/filter.js";
+import Api from "./api.js";
+
+const AUTHORIZATION = `Basic nerjyvfib12bhH`;
+const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+const api = new Api(END_POINT, AUTHORIZATION);
+
+api.getFilms().then((films) => {
+  console.log(films[0]);
+});
 
 const NUMBER_OF_GENERATED_CARD = 22;
 
 const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
-
+console.log(filmsCards[0]);
 const profile = generateProfile();
 
 const siteHeader = document.querySelector(`.header`);

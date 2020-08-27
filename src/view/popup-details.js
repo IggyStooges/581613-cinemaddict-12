@@ -26,13 +26,13 @@ const fillCommentsList = (comments, filmId) => {
   return commentsList;
 };
 
-const fillGenresList = (genres) => {
-  let genresList = ``;
-  for (let genre of genres) {
-    genresList = genresList.concat(`<span class="film-details__genre">${genre}</span>`);
-  }
-  return genresList;
-};
+// const fillGenresList = (genres) => {
+//   let genresList = ``;
+//   for (let genre of genres) {
+//     genresList = genresList.concat(`<span class="film-details__genre">${genre}</span>`);
+//   }
+//   return genresList;
+// };
 
 const createPopupFilmDetails = (film, emoji) => {
   const {
@@ -44,7 +44,7 @@ const createPopupFilmDetails = (film, emoji) => {
     rating,
     comments,
     age,
-    author,
+    director,
     writers,
     actors,
     date,
@@ -53,7 +53,7 @@ const createPopupFilmDetails = (film, emoji) => {
     isWatchList,
     duration,
     country,
-    genres,
+    genre,
   } = film;
 
   return `<section class="film-details">
@@ -80,7 +80,7 @@ const createPopupFilmDetails = (film, emoji) => {
               <table class="film-details__table">
                 <tr class="film-details__row">
                   <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${author}</td>
+                  <td class="film-details__cell">${director}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Writers</td>
@@ -105,7 +105,7 @@ const createPopupFilmDetails = (film, emoji) => {
                 <tr class="film-details__row">
                   <td class="film-details__term">Genres</td>
                   <td class="film-details__cell">
-                    ${fillGenresList(genres)}
+                    ${genre.join()}
                   </td>
                 </tr>
               </table>
