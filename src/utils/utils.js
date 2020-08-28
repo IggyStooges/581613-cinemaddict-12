@@ -57,33 +57,3 @@ export const getReleaseDate = (date) => {
 export const getMoment = (commentDate) => {
   return moment(commentDate).fromNow();
 };
-
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
-
-export const runOnKeys = (func, ...codes) => {
-  const pressed = new Set();
-  const fewButtonPressHandler = (event) => {
-    pressed.add(event.code);
-
-    for (let code of codes) {
-      if (!pressed.has(code)) {
-        return;
-      }
-    }
-
-    pressed.clear();
-    func();
-
-    document.removeEventListener(`keydown`, fewButtonPressHandler);
-  };
-
-  document.addEventListener(`keydown`, fewButtonPressHandler);
-
-  const keyUpHandler = (event) => {
-    pressed.delete(event.code);
-
-    document.removeEventListener(`keyup`, keyUpHandler);
-  };
-
-  document.addEventListener(`keyup`, keyUpHandler);
-};

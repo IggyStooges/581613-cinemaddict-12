@@ -22,7 +22,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FiltersType = {
@@ -31,3 +32,11 @@ export const FiltersType = {
   WATCHED: `history`,
   FAVORITES: `favorites`
 };
+
+export const MenuItem = {
+  FILMS: `TASKS`,
+  STATISTICS: `STATISTICS`
+};
+
+export const AUTHORIZATION = `Basic nerjyvfib12bhH`;
+export const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;

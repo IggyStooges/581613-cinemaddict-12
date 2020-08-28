@@ -1,7 +1,7 @@
 import he from "he";
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-import {parseFilmDuration, getMoment, getReleaseDate, runOnKeys} from "../utils/utils.js";
+import {parseFilmDuration, getMoment, getReleaseDate} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const fillCommentsList = (comments, filmId) => {
@@ -10,10 +10,10 @@ const fillCommentsList = (comments, filmId) => {
     commentsList = commentsList.concat(
         `<li class="film-details__comment">
         <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${comment.emodji}.png" alt="emoji-sleeping" width="55" height="55">
+            <img src="./images/emoji/${comment.emotion}.png" alt="emoji-sleeping" width="55" height="55">
         </span>
         <div>
-            <p class="film-details__comment-text">${he.encode(comment.text)}</p>
+            <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
             <p class="film-details__comment-info">
             <span class="film-details__comment-author">${comment.author}</span>
             <span class="film-details__comment-day">${getMoment(comment.date)}</span>
@@ -26,18 +26,10 @@ const fillCommentsList = (comments, filmId) => {
   return commentsList;
 };
 
-// const fillGenresList = (genres) => {
-//   let genresList = ``;
-//   for (let genre of genres) {
-//     genresList = genresList.concat(`<span class="film-details__genre">${genre}</span>`);
-//   }
-//   return genresList;
-// };
-
 const createPopupFilmDetails = (film, emoji) => {
   const {
     id,
-    descriptions,
+    description,
     poster,
     title,
     originalTitle,
@@ -51,7 +43,7 @@ const createPopupFilmDetails = (film, emoji) => {
     isWatched,
     isFavorite,
     isWatchList,
-    duration,
+    runtime,
     country,
     genre,
   } = film;
@@ -96,21 +88,21 @@ const createPopupFilmDetails = (film, emoji) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${parseFilmDuration(duration)}</td>
+                  <td class="film-details__cell">${parseFilmDuration(runtime)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
                   <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
+                  <td class="film-details__term">${genre.length > 1 ? `Genres` : `Genre`}</td>
                   <td class="film-details__cell">
                     ${genre.join()}
                   </td>
                 </tr>
               </table>
               <p class="film-details__film-description">
-                ${descriptions}
+                ${description.length > 140 ? `${description.substring(0, 139)}...` : description}
               </p>
             </div>
           </div>
@@ -131,7 +123,6 @@ const createPopupFilmDetails = (film, emoji) => {
             </ul>
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label">
-              ${emoji ? `<img src="./images/emoji/${emoji}.png" alt="emoji-${emoji}" style="font-size:10px;" width="30" height="30">` : ``}
               </div>
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -162,11 +153,11 @@ const createPopupFilmDetails = (film, emoji) => {
 };
 
 export default class PopupFilmDetails extends AbstractView {
-  constructor(film, emojie) {
+  constructor(film) {
     super();
 
     this._film = film;
-    this._emojie = emojie;
+    this._emojie = ``;
     this._clickHandler = this._clickHandler.bind(this);
     this._emojiesToggleHandler = this._emojiesToggleHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -254,7 +245,6 @@ export default class PopupFilmDetails extends AbstractView {
     this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
   }
 
-
   setCloseClickHandler(elementQuery, callback) {
     this._callback = callback;
     this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
@@ -273,21 +263,22 @@ export default class PopupFilmDetails extends AbstractView {
   }
 
   _formSubmitHandler() {
-    if (!this._emojie || !this._commentText) {
-      this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
-      throw new Error(`Can't submit fill comment area`);
-    } else {
-      this._formSubmit(this._emojie, this._commentText);
-    }
+    this.getElement()
+    .querySelector(`.film-details__comment-input`)
+    .addEventListener(`keydown`, (evt) => {
+      if (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey)) {
+        if (!this._emojie || !this._commentText) {
+          this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
+          throw new Error(`Can't submit fill comment area`);
+        }
+        this._formSubmit(this._emojie, this._commentText);
+      }
+    });
   }
 
   setFormSubmitHandler(callback) {
     this._formSubmit = callback;
-    runOnKeys(
-        this._formSubmitHandler,
-        `ControlLeft`,
-        `Enter`
-    );
+    this._formSubmitHandler();
   }
 
   _inputTextCommentHandler(evt) {
