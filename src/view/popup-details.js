@@ -1,27 +1,36 @@
 import he from "he";
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-import {parseFilmDuration, getMoment, getReleaseDate, cutDescription} from "../utils/utils.js";
+import {
+  parseFilmDuration,
+  getMoment,
+  getReleaseDate,
+  cutDescription,
+} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
   for (let comment of comments) {
-    commentsList = commentsList.concat(
-        `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${comment.emotion}.png" alt="emoji-sleeping" width="55" height="55">
-        </span>
-        <div>
-            <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
-            <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${getMoment(comment.date)}</span>
-            <button type="button" class="film-details__comment-delete" data-film-id="${filmId}" data-comment-id="${comment.id}">Delete</button>
-            </p>
-        </div>
+    if (typeof comment === `object`) {
+      commentsList = commentsList.concat(
+          `<li class="film-details__comment">
+            <span class="film-details__comment-emoji">
+              <img src="./images/emoji/${comment.emotion}.png" alt="emoji-sleeping" width="55" height="55">
+            </span>
+            <div>
+              <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
+              <p class="film-details__comment-info">
+                <span class="film-details__comment-author">${comment.author}</span>
+                <span class="film-details__comment-day">${getMoment(comment.date)}</span>
+                <button type="button" class="film-details__comment-delete" data-film-id="${filmId}" data-comment-id="${comment.id}">Delete</button>
+              </p>
+          </div>
         </li>`
-    );
+      );
+    } else {
+      commentsList = `<li class="board__no-tasks">Sorry, comments not available now, we will fix it soon.</li>`;
+    }
   }
   return commentsList;
 };
@@ -182,7 +191,10 @@ export default class PopupFilmDetails extends AbstractView {
       emojiContainer.firstElementChild.remove();
     }
 
-    const emojiesTemplate = (evt.target.tagName === `IMG`) ? evt.target.outerHTML : evt.target.innerHTML.trim();
+    const emojiesTemplate =
+      evt.target.tagName === `IMG`
+        ? evt.target.outerHTML
+        : evt.target.innerHTML.trim();
     const emojiesElement = createElement(emojiesTemplate);
 
     render(emojiContainer, emojiesElement);
@@ -192,7 +204,8 @@ export default class PopupFilmDetails extends AbstractView {
 
   _enableEmojieseToggler() {
     this.getElement()
-      .querySelectorAll(`.film-details__emoji-label`).forEach((element) => {
+      .querySelectorAll(`.film-details__emoji-label`)
+      .forEach((element) => {
         element.addEventListener(`click`, this._emojiesToggleHandler);
       });
   }
@@ -222,7 +235,9 @@ export default class PopupFilmDetails extends AbstractView {
 
   setFavoriteClickHandler(callback) {
     this._favoriteClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, this._favoriteClickHandler);
   }
 
   _watchedClickHandler(evt) {
@@ -232,7 +247,9 @@ export default class PopupFilmDetails extends AbstractView {
 
   setWatchedClickHandler(callback) {
     this._watchedClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, this._watchedClickHandler);
   }
 
   _watchlistClickHandler(evt) {
@@ -242,12 +259,16 @@ export default class PopupFilmDetails extends AbstractView {
 
   setWatchlistClickHandler(callback) {
     this._watchlistClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, this._watchlistClickHandler);
   }
 
   setCloseClickHandler(elementQuery, callback) {
     this._callback = callback;
-    this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
+    this.getElement()
+      .querySelector(elementQuery)
+      .addEventListener(`click`, this._clickHandler);
   }
 
   _deleteCommentHandler(evt) {
@@ -257,23 +278,25 @@ export default class PopupFilmDetails extends AbstractView {
 
   setDeleteCommentClickHandler(callback) {
     this._deleteCommentClick = callback;
-    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
-      element.addEventListener(`click`, this._deleteCommentHandler);
-    });
+    this.getElement()
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((element) => {
+        element.addEventListener(`click`, this._deleteCommentHandler);
+      });
   }
 
   _formSubmitHandler() {
     this.getElement()
-    .querySelector(`.film-details__comment-input`)
-    .addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey)) {
-        if (!this._emojie || !this._commentText) {
-          this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
-          throw new Error(`Can't submit fill comment area`);
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (evt) => {
+        if (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey)) {
+          if (!this._emojie || !this._commentText) {
+            this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
+            throw new Error(`Can't submit fill comment area`);
+          }
+          this._formSubmit(this._emojie, this._commentText);
         }
-        this._formSubmit(this._emojie, this._commentText);
-      }
-    });
+      });
   }
 
   setFormSubmitHandler(callback) {
@@ -288,6 +311,8 @@ export default class PopupFilmDetails extends AbstractView {
   }
 
   _setCommentTextInputHandler() {
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._inputTextCommentHandler);
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, this._inputTextCommentHandler);
   }
 }

@@ -167,6 +167,11 @@ export default class FilmPresenter {
     .then((comments) => {
       const filmWithComments = Object.assign({}, this._film, {comments});
       this._filmPopupComponent = new PopupFilmDetails(filmWithComments);
+    })
+    .catch(() => {
+      this._filmPopupComponent = new PopupFilmDetails(this._film);
+    })
+    .finally(() => {
       this._filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, this._deletePopup);
       this._filmPopupComponent.restoreHandlers();
       this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
