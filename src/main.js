@@ -5,14 +5,13 @@ import MainNavPresenter from "./presenter/filters.js";
 import NumberOfFilms from "./view/number-of-films.js";
 import {generateProfile} from "./mock/profile.js";
 import {render} from "./utils/render.js";
-import {MOVIES_COUNT} from "./mock/allmovies.js";
-import {generateFilm} from "./mock/film.js";
 import FilmsModel from "./model/films.js";
 import FiltersModel from "./model/filter.js";
+import Api from "./api.js";
+import {END_POINT, AUTHORIZATION, UpdateType} from "./const.js";
 
-const NUMBER_OF_GENERATED_CARD = 22;
-
-const filmsCards = new Array(NUMBER_OF_GENERATED_CARD).fill().map(generateFilm);
+const api = new Api(END_POINT, AUTHORIZATION);
+const filmsModel = new FilmsModel();
 
 const profile = generateProfile();
 
@@ -26,13 +25,21 @@ render(siteHeader, new UserTitle(profile));
 const filtersModel = new FiltersModel();
 
 render(siteMain, filmsBoard);
-render(siteFooter, new NumberOfFilms(MOVIES_COUNT));
-
-const filmsModel = new FilmsModel();
-filmsModel.setFilms(filmsCards);
 
 const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel);
-mainNavPresenter.init();
 
-const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel);
+const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, api);
 filmsBoardPresenter.init();
+
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(UpdateType.INIT, films);
+    mainNavPresenter.init();
+    render(siteFooter, new NumberOfFilms(films.length));
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+    mainNavPresenter.init();
+    render(siteFooter, new NumberOfFilms(`No`));
+  });
+

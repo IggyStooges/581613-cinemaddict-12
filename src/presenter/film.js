@@ -1,8 +1,9 @@
 import {render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType} from "../const.js";
+import {UserAction, UpdateType, END_POINT, AUTHORIZATION} from "../const.js";
 import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
-import {generateId, generateManName} from "../utils/utils.js";
+import Api from "../api.js";
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const Mode = {
   CARD: `CARD`,
@@ -30,19 +31,15 @@ export default class FilmPresenter {
   }
 
   init(film, containerElement) {
-    this._emoji = ``;
-
     const prevFilmComponent = this._filmComponent;
     const prevPopupComponent = this._filmPopupComponent;
 
     this._film = film;
-    if (prevPopupComponent) {
-      this._emoji = prevPopupComponent.restoreEmoji();
-    }
-    this._filmPopupComponent = new PopupFilmDetails(film, this._emoji);
-    this._filmComponent = new FilmsCard(film);
-    this._filmPopupElement = this._filmPopupComponent.getElement();
 
+    this._filmComponent = new FilmsCard(this._film);
+    if (this._filmPopupComponent) {
+      this._filmPopupElement = this._filmPopupComponent.getElement();
+    }
     this._renderFilm(film, containerElement);
 
     if (!prevPopupComponent && !prevFilmComponent) {
@@ -50,10 +47,10 @@ export default class FilmPresenter {
       return;
     }
 
-    replace(this._filmPopupComponent, prevPopupComponent);
     replace(this._filmComponent, prevFilmComponent);
 
     if (this._mode === Mode.POPUP) {
+      replace(this._filmPopupComponent, prevPopupComponent);
       this._renderPopup();
     }
 
@@ -82,7 +79,7 @@ export default class FilmPresenter {
   }
 
   _handleDeleteCommentClick(commentId) {
-    const index = this._film.comments.findIndex((comment) => comment.id === Number(commentId));
+    const index = this._film.comments.findIndex((comment) => comment.id === commentId);
 
     this._changeData(
         UserAction.REMOVE_COMMENT,
@@ -91,25 +88,21 @@ export default class FilmPresenter {
           comments: [...this._film.comments.slice(0, index),
             ...this._film.comments.slice(index + 1)]
         }),
-        index
+        commentId
     );
   }
 
-  _handleFormSubmit(emoji, comment) {
+  _handleFormSubmit(emoji, commentText) {
     const newComment = {
-      id: generateId(),
-      emodji: emoji,
+      emotion: emoji,
       date: new Date(),
-      author: generateManName(),
-      text: comment,
+      comment: commentText,
     };
 
     this._changeData(
-        UserAction.REMOVE_COMMENT,
+        UserAction.ADD_COMMENT,
         UpdateType.PATCH,
-        Object.assign({}, this._film, {
-          comments: [...this._film.comments, newComment]
-        }),
+        this._film,
         newComment
     );
   }
@@ -168,20 +161,27 @@ export default class FilmPresenter {
   }
 
   _renderPopup() {
-    this._emoji = ``;
     this._changeMode();
     this._mode = Mode.POPUP;
-    render(document.querySelector(`body`), this._filmPopupComponent);
-
+    api.getComments(this._film.id)
+    .then((comments) => {
+      const filmWithComments = Object.assign({}, this._film, {comments});
+      this._filmPopupComponent = new PopupFilmDetails(filmWithComments);
+    })
+    .catch(() => {
+      this._filmPopupComponent = new PopupFilmDetails(this._film);
+    })
+    .finally(() => {
+      this._filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, this._deletePopup);
+      this._filmPopupComponent.restoreHandlers();
+      this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+      this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
+      this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+      this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
+      render(document.querySelector(`body`), this._filmPopupComponent);
+    });
     document.addEventListener(`keydown`, this._escKeyDown);
-
-    this._filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, this._deletePopup);
-    this._filmPopupComponent.restoreHandlers();
-    this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
-    this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
-    this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
-    this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
 
   }
 }

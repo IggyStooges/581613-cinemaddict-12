@@ -22,7 +22,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 
 export const FiltersType = {
@@ -30,4 +31,26 @@ export const FiltersType = {
   WATCHLIST: `watchlist`,
   WATCHED: `history`,
   FAVORITES: `favorites`
+};
+
+export const MenuItem = {
+  FILMS: `TASKS`,
+  STATISTICS: `STATISTICS`
+};
+
+export const AUTHORIZATION = `Basic nerjyvfib12bhH`;
+export const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+
+export const apiHeaders = {"Content-Type": `application/json`};
+
+export const Method = {
+  GET: `GET`,
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`,
+};
+
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299,
 };

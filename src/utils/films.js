@@ -1,5 +1,7 @@
 export const sortFilmDate = (firstFilm, secondFilm) => {
-  return firstFilm.date.getTime() - secondFilm.date.getTime();
+  const firstFilmDate = new Date(firstFilm.date);
+  const secondFilmDate = new Date(secondFilm.date);
+  return firstFilmDate.getTime() - secondFilmDate.getTime();
 };
 
 export const sortFilmRating = (firstFilm, secondFilm) => {

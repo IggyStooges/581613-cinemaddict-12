@@ -1,59 +1,60 @@
 import he from "he";
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-import {parseFilmDuration, getMoment, getReleaseDate, runOnKeys} from "../utils/utils.js";
+import {
+  parseFilmDuration,
+  getMoment,
+  getReleaseDate,
+  cutDescription,
+} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
   for (let comment of comments) {
-    commentsList = commentsList.concat(
-        `<li class="film-details__comment">
-        <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${comment.emodji}.png" alt="emoji-sleeping" width="55" height="55">
-        </span>
-        <div>
-            <p class="film-details__comment-text">${he.encode(comment.text)}</p>
-            <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${comment.author}</span>
-            <span class="film-details__comment-day">${getMoment(comment.date)}</span>
-            <button type="button" class="film-details__comment-delete" data-film-id="${filmId}" data-comment-id="${comment.id}">Delete</button>
-            </p>
-        </div>
+    if (typeof comment === `object`) {
+      commentsList = commentsList.concat(
+          `<li class="film-details__comment">
+            <span class="film-details__comment-emoji">
+              <img src="./images/emoji/${comment.emotion}.png" alt="emoji-sleeping" width="55" height="55">
+            </span>
+            <div>
+              <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
+              <p class="film-details__comment-info">
+                <span class="film-details__comment-author">${comment.author}</span>
+                <span class="film-details__comment-day">${getMoment(comment.date)}</span>
+                <button type="button" class="film-details__comment-delete" data-film-id="${filmId}" data-comment-id="${comment.id}">Delete</button>
+              </p>
+          </div>
         </li>`
-    );
+      );
+    } else {
+      commentsList = `<li class="board__no-tasks">Sorry, comments not available now, we will fix it soon.</li>`;
+    }
   }
   return commentsList;
-};
-
-const fillGenresList = (genres) => {
-  let genresList = ``;
-  for (let genre of genres) {
-    genresList = genresList.concat(`<span class="film-details__genre">${genre}</span>`);
-  }
-  return genresList;
 };
 
 const createPopupFilmDetails = (film, emoji) => {
   const {
     id,
-    descriptions,
+    description,
     poster,
     title,
     originalTitle,
     rating,
     comments,
     age,
-    author,
+    director,
     writers,
     actors,
     date,
     isWatched,
     isFavorite,
     isWatchList,
-    duration,
+    runtime,
     country,
-    genres,
+    genre,
   } = film;
 
   return `<section class="film-details">
@@ -80,7 +81,7 @@ const createPopupFilmDetails = (film, emoji) => {
               <table class="film-details__table">
                 <tr class="film-details__row">
                   <td class="film-details__term">Director</td>
-                  <td class="film-details__cell">${author}</td>
+                  <td class="film-details__cell">${director}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Writers</td>
@@ -96,21 +97,21 @@ const createPopupFilmDetails = (film, emoji) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${parseFilmDuration(duration)}</td>
+                  <td class="film-details__cell">${parseFilmDuration(runtime)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
                   <td class="film-details__cell">${country}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">Genres</td>
+                  <td class="film-details__term">${genre.length > 1 ? `Genres` : `Genre`}</td>
                   <td class="film-details__cell">
-                    ${fillGenresList(genres)}
+                    ${genre.join()}
                   </td>
                 </tr>
               </table>
               <p class="film-details__film-description">
-                ${descriptions}
+                ${cutDescription(description)}
               </p>
             </div>
           </div>
@@ -131,7 +132,6 @@ const createPopupFilmDetails = (film, emoji) => {
             </ul>
             <div class="film-details__new-comment">
               <div for="add-emoji" class="film-details__add-emoji-label">
-              ${emoji ? `<img src="./images/emoji/${emoji}.png" alt="emoji-${emoji}" style="font-size:10px;" width="30" height="30">` : ``}
               </div>
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -162,11 +162,11 @@ const createPopupFilmDetails = (film, emoji) => {
 };
 
 export default class PopupFilmDetails extends AbstractView {
-  constructor(film, emojie) {
+  constructor(film) {
     super();
 
     this._film = film;
-    this._emojie = emojie;
+    this._emojie = ``;
     this._clickHandler = this._clickHandler.bind(this);
     this._emojiesToggleHandler = this._emojiesToggleHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -191,7 +191,10 @@ export default class PopupFilmDetails extends AbstractView {
       emojiContainer.firstElementChild.remove();
     }
 
-    const emojiesTemplate = (evt.target.tagName === `IMG`) ? evt.target.outerHTML : evt.target.innerHTML.trim();
+    const emojiesTemplate =
+      evt.target.tagName === `IMG`
+        ? evt.target.outerHTML
+        : evt.target.innerHTML.trim();
     const emojiesElement = createElement(emojiesTemplate);
 
     render(emojiContainer, emojiesElement);
@@ -201,7 +204,8 @@ export default class PopupFilmDetails extends AbstractView {
 
   _enableEmojieseToggler() {
     this.getElement()
-      .querySelectorAll(`.film-details__emoji-label`).forEach((element) => {
+      .querySelectorAll(`.film-details__emoji-label`)
+      .forEach((element) => {
         element.addEventListener(`click`, this._emojiesToggleHandler);
       });
   }
@@ -231,7 +235,9 @@ export default class PopupFilmDetails extends AbstractView {
 
   setFavoriteClickHandler(callback) {
     this._favoriteClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--favorite`).addEventListener(`click`, this._favoriteClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, this._favoriteClickHandler);
   }
 
   _watchedClickHandler(evt) {
@@ -241,7 +247,9 @@ export default class PopupFilmDetails extends AbstractView {
 
   setWatchedClickHandler(callback) {
     this._watchedClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watched`).addEventListener(`click`, this._watchedClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, this._watchedClickHandler);
   }
 
   _watchlistClickHandler(evt) {
@@ -251,13 +259,16 @@ export default class PopupFilmDetails extends AbstractView {
 
   setWatchlistClickHandler(callback) {
     this._watchlistClick = callback;
-    this.getElement().querySelector(`.film-details__control-label--watchlist`).addEventListener(`click`, this._watchlistClickHandler);
+    this.getElement()
+      .querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, this._watchlistClickHandler);
   }
-
 
   setCloseClickHandler(elementQuery, callback) {
     this._callback = callback;
-    this.getElement().querySelector(elementQuery).addEventListener(`click`, this._clickHandler);
+    this.getElement()
+      .querySelector(elementQuery)
+      .addEventListener(`click`, this._clickHandler);
   }
 
   _deleteCommentHandler(evt) {
@@ -267,27 +278,30 @@ export default class PopupFilmDetails extends AbstractView {
 
   setDeleteCommentClickHandler(callback) {
     this._deleteCommentClick = callback;
-    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((element) => {
-      element.addEventListener(`click`, this._deleteCommentHandler);
-    });
+    this.getElement()
+      .querySelectorAll(`.film-details__comment-delete`)
+      .forEach((element) => {
+        element.addEventListener(`click`, this._deleteCommentHandler);
+      });
   }
 
   _formSubmitHandler() {
-    if (!this._emojie || !this._commentText) {
-      this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
-      throw new Error(`Can't submit fill comment area`);
-    } else {
-      this._formSubmit(this._emojie, this._commentText);
-    }
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (evt) => {
+        if (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey)) {
+          if (!this._emojie || !this._commentText) {
+            this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
+            throw new Error(`Can't submit fill comment area`);
+          }
+          this._formSubmit(this._emojie, this._commentText);
+        }
+      });
   }
 
   setFormSubmitHandler(callback) {
     this._formSubmit = callback;
-    runOnKeys(
-        this._formSubmitHandler,
-        `ControlLeft`,
-        `Enter`
-    );
+    this._formSubmitHandler();
   }
 
   _inputTextCommentHandler(evt) {
@@ -297,6 +311,8 @@ export default class PopupFilmDetails extends AbstractView {
   }
 
   _setCommentTextInputHandler() {
-    this.getElement().querySelector(`.film-details__comment-input`).addEventListener(`input`, this._inputTextCommentHandler);
+    this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, this._inputTextCommentHandler);
   }
 }
