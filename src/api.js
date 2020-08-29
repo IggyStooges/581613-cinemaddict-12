@@ -1,5 +1,5 @@
 import FilmsModel from "./model/films.js";
-import {Headers, Method} from "./const.js";
+import {apiHeaders, Method} from "./const.js";
 import {isSuccessStatus} from "./utils/utils.js";
 
 export default class Api {
@@ -15,9 +15,7 @@ export default class Api {
   getFilms() {
     return this._load({url: `movies`})
       .then(Api.toJSON)
-      .then((films) => {
-        return films.map(FilmsModel.adaptToClient);
-      });
+      .then((films) => films.map(FilmsModel.adaptToClient));
   }
 
   updateFilm(film) {
@@ -25,7 +23,7 @@ export default class Api {
       url: `movies/${film.id}`,
       method: Method.PUT,
       body: JSON.stringify(FilmsModel.adaptToServer(film)),
-      headers: new Headers(Headers),
+      headers: new Headers(apiHeaders),
     })
       .then(Api.toJSON)
       .then(FilmsModel.adaptToClient);
@@ -36,7 +34,7 @@ export default class Api {
       url: `comments/${film.id}`,
       method: Method.POST,
       body: JSON.stringify(comment),
-      headers: new Headers(Headers),
+      headers: new Headers(apiHeaders),
     })
       .then(Api.toJSON)
       .then(({comments, movie}) => {

@@ -29,25 +29,13 @@ render(siteMain, filmsBoard);
 const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel);
 
 const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, api);
+filmsBoardPresenter.init();
 
 api.getFilms()
   .then((films) => {
-    const promiseses = [];
-    films.forEach((element) => {
-      promiseses.push(api.getComments(element.id));
-    });
-    Promise.all(promiseses).then((receivedComments) => {
-      const uploadedFilms = [];
-      for (let film of films) {
-        film = Object.assign({}, film, {
-          comments: receivedComments[[Number(film.id)]]
-        });
-        uploadedFilms.push(film);
-      }
-      filmsModel.setFilms(UpdateType.INIT, uploadedFilms);
-      mainNavPresenter.init();
-      render(siteFooter, new NumberOfFilms(uploadedFilms.length));
-    });
+    filmsModel.setFilms(UpdateType.INIT, films);
+    mainNavPresenter.init();
+    render(siteFooter, new NumberOfFilms(films.length));
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
@@ -55,4 +43,3 @@ api.getFilms()
     render(siteFooter, new NumberOfFilms(`No`));
   });
 
-filmsBoardPresenter.init();
