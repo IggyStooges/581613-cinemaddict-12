@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {parseFilmDuration, getReleaseDate} from "../utils/utils.js";
+import {parseFilmDuration, getReleaseDate, cutDescription} from "../utils/utils.js";
 
 const determineFavoriteClassName = (flag) => {
   const favoriteClassName = flag
@@ -56,7 +56,7 @@ const createFilmsCard = (film) => {
         <span class="film-card__genre">${!genre.length ? `` : genre[0]}</span>
       </p>
       <img src="${poster}" alt="" class="film-card__poster">
-      <p class="film-card__description">${description.length > 140 ? `${description.substring(0, 139)}...` : description}</p>
+      <p class="film-card__description">${cutDescription(description)}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
         <button class="film-card__controls-item button ${determineWatcListClassName(isWatchList)}">Add to watchlist</button>

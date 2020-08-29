@@ -1,16 +1,6 @@
 import FilmsModel from "./model/films.js";
-
-const Method = {
-  GET: `GET`,
-  PUT: `PUT`,
-  POST: `POST`,
-  DELETE: `DELETE`
-};
-
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299
-};
+import {Headers, Method} from "./const.js";
+import {isSuccessStatus} from "./utils/utils.js";
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -19,8 +9,7 @@ export default class Api {
   }
 
   getComments(filmId) {
-    return this._load({url: `comments/${filmId}`})
-    .then(Api.toJSON);
+    return this._load({url: `comments/${filmId}`}).then(Api.toJSON);
   }
 
   getFilms() {
@@ -36,7 +25,7 @@ export default class Api {
       url: `movies/${film.id}`,
       method: Method.PUT,
       body: JSON.stringify(FilmsModel.adaptToServer(film)),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers(Headers),
     })
       .then(Api.toJSON)
       .then(FilmsModel.adaptToClient);
@@ -47,46 +36,31 @@ export default class Api {
       url: `comments/${film.id}`,
       method: Method.POST,
       body: JSON.stringify(comment),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers(Headers),
     })
       .then(Api.toJSON)
-      .then((responce) => {
-        const updatedFilm = FilmsModel.adaptToClient(responce.movie);
-        updatedFilm.comments = responce.comments;
-        return updatedFilm;
-      }
-      );
+      .then(({comments, movie}) => {
+        return Object.assign({}, FilmsModel.adaptToClient(movie), {comments});
+      });
   }
 
   deleteComment(commentId) {
     return this._load({
       url: `comments/${commentId}`,
-      method: Method.DELETE
+      method: Method.DELETE,
     });
   }
 
-
-  _load({
-    url,
-    method = Method.GET,
-    body = null,
-    headers = new Headers()
-  }) {
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
 
-    return fetch(
-        `${this._endPoint}/${url}`,
-        {method, body, headers}
-    )
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(Api.checkStatus)
       .catch(Api.catchError);
   }
 
   static checkStatus(response) {
-    if (
-      response.status < SuccessHTTPStatusRange.MIN &&
-      response.status > SuccessHTTPStatusRange.MAX
-    ) {
+    if (!isSuccessStatus(response.status)) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
 

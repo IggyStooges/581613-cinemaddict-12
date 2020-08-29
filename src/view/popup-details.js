@@ -1,7 +1,7 @@
 import he from "he";
 import AbstractView from "./abstract.js";
 import {render, createElement} from "../utils/render.js";
-import {parseFilmDuration, getMoment, getReleaseDate} from "../utils/utils.js";
+import {parseFilmDuration, getMoment, getReleaseDate, cutDescription} from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
 const fillCommentsList = (comments, filmId) => {
@@ -102,7 +102,7 @@ const createPopupFilmDetails = (film, emoji) => {
                 </tr>
               </table>
               <p class="film-details__film-description">
-                ${description.length > 140 ? `${description.substring(0, 139)}...` : description}
+                ${cutDescription(description)}
               </p>
             </div>
           </div>

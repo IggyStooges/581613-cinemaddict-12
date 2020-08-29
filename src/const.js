@@ -40,3 +40,17 @@ export const MenuItem = {
 
 export const AUTHORIZATION = `Basic nerjyvfib12bhH`;
 export const END_POINT = `https://12.ecmascript.pages.academy/cinemaddict`;
+
+export const Headers = {"Content-Type": `application/json`};
+
+export const Method = {
+  GET: `GET`,
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`,
+};
+
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299,
+};

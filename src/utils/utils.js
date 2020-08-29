@@ -1,4 +1,5 @@
 import moment from "moment";
+import {SuccessHTTPStatusRange} from "../const.js";
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -56,4 +57,12 @@ export const getReleaseDate = (date) => {
 
 export const getMoment = (commentDate) => {
   return moment(commentDate).fromNow();
+};
+
+export const cutDescription = (description) => {
+  return description.length > 140 ? `${description.substring(0, 139)}...` : description;
+};
+
+export const isSuccessStatus = (status) => {
+  return status >= SuccessHTTPStatusRange.MIN && status <= SuccessHTTPStatusRange.MAX;
 };
