@@ -2,7 +2,8 @@ import {render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType, END_POINT, AUTHORIZATION} from "../const.js";
 import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
-import Api from "../api.js";
+import Api from "../api/index.js";
+
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const Mode = {
@@ -41,7 +42,6 @@ export default class FilmPresenter {
     const prevPopupComponent = this._filmPopupComponent;
 
     this._film = film;
-    this._isAddAborted = false;
 
     this._filmComponent = new FilmsCard(this._film);
     if (this._filmPopupComponent) {
@@ -109,7 +109,6 @@ export default class FilmPresenter {
         break;
     }
   }
-
 
   _handleFormSubmit(emoji, commentText) {
     const newComment = {
@@ -189,7 +188,6 @@ export default class FilmPresenter {
     })
     .catch(() => {
       this._filmPopupComponent = new PopupFilmDetails(this._film);
-      this._isAddAborted = !this._isAddAborted;
     })
     .finally(() => {
       this._filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, this._deletePopup);
@@ -198,7 +196,7 @@ export default class FilmPresenter {
       this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
       this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
       this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
-      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit, this._isAddAborted);
+      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
       render(document.querySelector(`body`), this._filmPopupComponent);
     });
     document.addEventListener(`keydown`, this._escKeyDown);
