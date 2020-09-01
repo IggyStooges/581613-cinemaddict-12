@@ -104,7 +104,7 @@ export default class FilmPresenter {
       case Error.ADDING:
         this._filmPopupComponent.setFormErrorHandler();
         break;
-      case Error.DELETING:
+      default:
         this._filmPopupComponent.setDeleteErrorHandler();
         break;
     }
