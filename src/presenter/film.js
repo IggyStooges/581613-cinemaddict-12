@@ -9,6 +9,12 @@ const Mode = {
   CARD: `CARD`,
   POPUP: `POPUP`
 };
+
+export const Error = {
+  ADDING: `ADDING`,
+  DELETING: `DELETING`
+};
+
 export default class FilmPresenter {
   constructor(filmsBoard, changeData, changeMode) {
     this._filmsBoard = filmsBoard;
@@ -35,6 +41,7 @@ export default class FilmPresenter {
     const prevPopupComponent = this._filmPopupComponent;
 
     this._film = film;
+    this._isAddAborted = false;
 
     this._filmComponent = new FilmsCard(this._film);
     if (this._filmPopupComponent) {
@@ -79,7 +86,7 @@ export default class FilmPresenter {
   }
 
   _handleDeleteCommentClick(commentId) {
-    const index = this._film.comments.findIndex((comment) => comment.id === commentId);
+    const index = this._film.commentsIds.findIndex((comment) => comment === commentId);
 
     this._changeData(
         UserAction.REMOVE_COMMENT,
@@ -91,6 +98,18 @@ export default class FilmPresenter {
         commentId
     );
   }
+
+  setErrorHandler(error) {
+    switch (error) {
+      case Error.ADDING:
+        this._filmPopupComponent.setFormErrorHandler();
+        break;
+      default:
+        this._filmPopupComponent.setDeleteErrorHandler();
+        break;
+    }
+  }
+
 
   _handleFormSubmit(emoji, commentText) {
     const newComment = {
@@ -170,6 +189,7 @@ export default class FilmPresenter {
     })
     .catch(() => {
       this._filmPopupComponent = new PopupFilmDetails(this._film);
+      this._isAddAborted = !this._isAddAborted;
     })
     .finally(() => {
       this._filmPopupComponent.setCloseClickHandler(`.film-details__close-btn`, this._deletePopup);
@@ -178,10 +198,9 @@ export default class FilmPresenter {
       this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
       this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
       this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
-      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
+      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit, this._isAddAborted);
       render(document.querySelector(`body`), this._filmPopupComponent);
     });
     document.addEventListener(`keydown`, this._escKeyDown);
-
   }
 }

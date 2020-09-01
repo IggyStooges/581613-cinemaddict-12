@@ -42,4 +42,3 @@ api.getFilms()
     mainNavPresenter.init();
     render(siteFooter, new NumberOfFilms(`No`));
   });
-

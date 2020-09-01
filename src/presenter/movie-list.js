@@ -1,4 +1,3 @@
-import {getRandomInteger} from "../utils/utils.js";
 import {render, remove} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
 import ShowMoreButton from "../view/show-more-button.js";
@@ -9,7 +8,7 @@ import SortMenu from "../view/sort-menu.js";
 import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating} from "../utils/films.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
-import FilmPresenter from "./film.js";
+import FilmPresenter, {Error as FilmPresenterError} from "./film.js";
 import {filter} from "../utils/filter.js";
 import LoadingView from "../view/loading.js";
 
@@ -86,11 +85,15 @@ export default class MovieList {
       case UserAction.REMOVE_COMMENT:
         this._api.deleteComment(updateCommentData).then(() => {
           this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
+        }).catch(() => {
+          this._filmPresenterList[updateFilm.id].setErrorHandler(FilmPresenterError.DELETING);
         });
         break;
       case UserAction.ADD_COMMENT:
         this._api.addComment(updateFilm, updateCommentData).then((response) => {
           this._filmsModel.addComment(updateType, updateFilm, response.comments);
+        }).catch(() => {
+          this._filmPresenterList[updateFilm.id].setErrorHandler(FilmPresenterError.ADDING);
         });
         break;
       default:
@@ -190,21 +193,21 @@ export default class MovieList {
     this._loadMoreButton.setClickHandler(this._handleLoadMoreButtonClick);
   }
 
-  _renderExtraSections() {
-    render(this._filmsBoard, this._topRatedFilmsExtraSection);
-    render(this._filmsBoard, this._mostCommentedFilmsExtraSection);
+  // _renderExtraSections() {
+  //   render(this._filmsBoard, this._topRatedFilmsExtraSection);
+  //   render(this._filmsBoard, this._mostCommentedFilmsExtraSection);
 
-    const extraSections = this._filmsBoard.querySelectorAll(`.films-list--extra`);
-    const extraFilms = [...this._filmsModel.getFilms()];
+  //   const extraSections = this._filmsBoard.querySelectorAll(`.films-list--extra`);
+  //   const extraFilms = [...this._filmsModel.getFilms()];
 
-    for (const section of extraSections) {
-      const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
+  //   for (const section of extraSections) {
+  //     const extraSectionFilmsContainer = section.querySelector(`.films-list__container`);
 
-      for (let i = 0; i < this._extraSectionFilmCount; i++) {
-        this._renderFilm(extraFilms[getRandomInteger(i, extraFilms.length - 1)], extraSectionFilmsContainer);
-      }
-    }
-  }
+  //     for (let i = 0; i < this._extraSectionFilmCount; i++) {
+  //       this._renderFilm(extraFilms[getRandomInteger(i, extraFilms.length - 1)], extraSectionFilmsContainer);
+  //     }
+  //   }
+  // }
 
   _clearFilmsBoard({resetRenderedFilmCount = false, resetSortType = false} = {}) {
     const filmCount = this._getFilms().length;
@@ -247,7 +250,7 @@ export default class MovieList {
     }
 
     this._renderSortMenu();
-    this._renderExtraSections();
+    // this._renderExtraSections();
 
     this._renderFilms(films.slice(0, Math.min(filmsCount, FILM_COUNT_PER_STEP)));
 
