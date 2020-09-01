@@ -9,6 +9,8 @@ import {
 } from "../utils/utils.js";
 import {Emojies} from "../const.js";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
   for (let comment of comments) {
@@ -59,6 +61,7 @@ const createPopupFilmDetails = (film, emoji) => {
 
   return `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
+      <fieldset class="film-details__wrapper">
         <div class="form-details__top-container">
           <div class="film-details__close">
             <button class="film-details__close-btn" type="button">close</button>
@@ -157,6 +160,7 @@ const createPopupFilmDetails = (film, emoji) => {
             </div>
           </section>
         </div>
+        </fieldset>
       </form>
     </section>`;
 };
@@ -200,6 +204,7 @@ export default class PopupFilmDetails extends AbstractView {
     render(emojiContainer, emojiesElement);
     element.querySelector(`#emoji-${selectedEmojiId}`).checked = true;
     this._emojie = selectedEmojiId;
+    element.querySelector(`.film-details__comment-input`).focus();
   }
 
   _enableEmojieseToggler() {
@@ -273,15 +278,34 @@ export default class PopupFilmDetails extends AbstractView {
 
   _deleteCommentHandler(evt) {
     evt.preventDefault();
-    this._deleteCommentClick(evt.target.dataset.commentId);
+    if (evt.target.tagName === `BUTTON`) {
+      this._currentDeleteButton = evt.target;
+
+      this._deleteCommentClick(evt.target.dataset.commentId);
+      evt.target.innerHTML = `Deleting...`;
+      evt.target.setAttribute(`disabled`, `disabled`);
+    }
+  }
+
+  setDeleteErrorHandler() {
+    this._currentDeletingComment.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this._currentDeletingComment.style.animation = ``;
+      this._currentDeleteButton.removeAttribute(`disabled`);
+      this._currentDeleteButton.innerHTML = `Delete`;
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   setDeleteCommentClickHandler(callback) {
     this._deleteCommentClick = callback;
     this.getElement()
-      .querySelectorAll(`.film-details__comment-delete`)
+      .querySelectorAll(`.film-details__comment`)
       .forEach((element) => {
-        element.addEventListener(`click`, this._deleteCommentHandler);
+        element.addEventListener(`click`, (evt) => {
+          this._currentDeletingComment = element;
+
+          this._deleteCommentHandler(evt);
+        });
       });
   }
 
@@ -294,9 +318,18 @@ export default class PopupFilmDetails extends AbstractView {
             this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
             throw new Error(`Can't submit fill comment area`);
           }
+          this.getElement().querySelector(`.film-details__wrapper`).setAttribute(`disabled`, `disabled`);
           this._formSubmit(this._emojie, this._commentText);
         }
       });
+  }
+
+  setFormErrorHandler() {
+    this.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this.getElement().style.animation = ``;
+      this.getElement().querySelector(`.film-details__wrapper`).removeAttribute(`disabled`);
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 
   setFormSubmitHandler(callback) {
