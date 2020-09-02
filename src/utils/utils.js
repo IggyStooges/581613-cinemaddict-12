@@ -1,5 +1,6 @@
 import moment from "moment";
 import {SuccessHTTPStatusRange} from "../const.js";
+import {USER_TITLES} from "../const.js";
 
 export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -66,3 +67,17 @@ export const cutDescription = (description) => {
 export const isSuccessStatus = (status) => {
   return status >= SuccessHTTPStatusRange.MIN && status <= SuccessHTTPStatusRange.MAX;
 };
+
+export const convertUserTitle = (numbersOfFilms) => {
+  if (numbersOfFilms === 0) {
+    return USER_TITLES[0];
+  } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
+    return USER_TITLES[1];
+  } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
+    return USER_TITLES[2];
+  } else if (numbersOfFilms > 20) {
+    return USER_TITLES[3];
+  }
+  return ``;
+};
+

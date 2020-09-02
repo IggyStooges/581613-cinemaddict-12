@@ -3,8 +3,13 @@ import MainNav from "../view/main-nav.js";
 import {filter} from "../utils/filter.js";
 import {FiltersType, UpdateType} from "../const.js";
 
+export const MenuItem = {
+  FILMS_BOARD: `films`,
+  STATISTICS: `statistics`
+};
+
 export default class MainNavPresenter {
-  constructor(container, filtersModel, filmsModel) {
+  constructor(container, filtersModel, filmsModel, filmsBoard, statisticBoard) {
     this._container = container;
     this._filtersModel = filtersModel;
     this._filmsModel = filmsModel;
@@ -12,6 +17,9 @@ export default class MainNavPresenter {
 
     this._filtersComponent = null;
     this._currentFiltersType = null;
+
+    this._filmsBoard = filmsBoard;
+    this._statisticBoard = statisticBoard;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFiltersTypeChange = this._handleFiltersTypeChange.bind(this);
@@ -29,6 +37,7 @@ export default class MainNavPresenter {
     this._filtersComponent = new MainNav(filters, this._currentFiltersType);
 
     this._filtersComponent.setFiltersTypeChangeHandler(this._handleFiltersTypeChange);
+    this._setMenuChangeHandler(this._statisticBoard, this._filmsBoard);
 
     if (prevFiltersComponent === null) {
       render(this._container, this._filtersComponent, RenderPosition.BEFOREBEGIN);
@@ -49,6 +58,30 @@ export default class MainNavPresenter {
     }
 
     this._filtersModel.setFilter(UpdateType.MAJOR, filtersType);
+  }
+
+  _setMenuChangeHandler (statisticBoard, filmsBoard) {
+    this._filtersComponent.setMenuClickHandler((e) => {
+      this._handleSiteMenuClick(e, statisticBoard, filmsBoard);
+    });
+    this._filtersComponent.setFiltersTypeChangeHandler(this._handleFiltersTypeChange);
+  }
+
+  _handleSiteMenuClick(menuItem, statisticBoard, filmsBoard) {
+    switch (menuItem) {
+      case MenuItem.STATISTICS:
+        render(document.querySelector(`main`), statisticBoard);
+        filmsBoard.destroy();
+        break;
+      default:
+        remove(statisticBoard);
+        filmsBoard.init();
+        break;
+    }
+  };
+
+  getWatchedCount() {
+    return this._getFilters().watched.count;
   }
 
   _getFilters() {

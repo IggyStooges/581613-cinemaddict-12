@@ -1,18 +1,5 @@
-import {USER_TITLES} from "../const.js";
 import AbstractView from "./abstract.js";
-
-const convertUserTitle = (numbersOfFilms) => {
-  if (numbersOfFilms === 0) {
-    return USER_TITLES[0];
-  } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
-    return USER_TITLES[1];
-  } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
-    return USER_TITLES[2];
-  } else if (numbersOfFilms > 20) {
-    return USER_TITLES[3];
-  }
-  return ``;
-};
+import {convertUserTitle} from "../utils/utils.js"
 
 const createUserTitle = (profile) => {
   const {numbersOfFilms, avatar} = profile;
@@ -24,8 +11,6 @@ const createUserTitle = (profile) => {
       </section>`
   );
 };
-
-
 export default class UserTitle extends AbstractView {
   constructor(profile) {
     super();

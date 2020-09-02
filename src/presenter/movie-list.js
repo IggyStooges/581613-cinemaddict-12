@@ -44,16 +44,26 @@ export default class MovieList {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filtersModel.addObserver(this._handleModelEvent);
-
     this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
   }
 
   init() {
     this._renderFilmsSection();
     this._renderFilmsBoard();
+
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filtersModel.addObserver(this._handleModelEvent);
   }
+
+  destroy() {
+    this._clearFilmsBoard({resetRenderedFilmCount: true, resetSortType: true});
+
+    remove(this._sortMenuComponent);
+
+    this._filmsModel.removeObserver(this._handleModelEvent);
+    this._filtersModel.removeObserver(this._handleModelEvent);
+  }
+
 
   _getFilms() {
     const films = this._filmsModel.getFilms();
@@ -238,7 +248,6 @@ export default class MovieList {
   _renderFilmsBoard() {
     const films = this._getFilms();
     const filmsCount = films.length;
-
     if (this._isLoading) {
       this._renderLoading();
       return;
@@ -249,9 +258,8 @@ export default class MovieList {
       return;
     }
 
-    this._renderSortMenu();
     // this._renderExtraSections();
-
+    this._renderSortMenu();
     this._renderFilms(films.slice(0, Math.min(filmsCount, FILM_COUNT_PER_STEP)));
 
     if (filmsCount > FILM_COUNT_PER_STEP) {
