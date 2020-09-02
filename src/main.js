@@ -52,11 +52,12 @@ apiWithProvider.getFilms()
   });
 
   window.addEventListener(`load`, () => {
-    navigator.serviceWorker.register(`/sw.js`)
+    navigator.serviceWorker.register(`./sw.js`)
       .then(() => {
-        console.log(`ServiceWorker available`); // eslint-disable-line
-      }).catch(() => {
-        console.error(`ServiceWorker isn't available`); // eslint-disable-line
+        console.log(`ServiceWorker available`);
+      }).catch((e) => {
+        console.log(e)
+        console.error(`ServiceWorker isn't available`);
       });
   });
 
