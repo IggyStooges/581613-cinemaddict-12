@@ -1,6 +1,6 @@
-import FilmsModel from "./model/films.js";
-import {apiHeaders, Method} from "./const.js";
-import {isSuccessStatus} from "./utils/utils.js";
+import FilmsModel from "../model/films.js";
+import {apiHeaders, Method} from "../const.js";
+import {isSuccessStatus} from "../utils/utils.js";
 
 export default class Api {
   constructor(endPoint, authorization) {
@@ -48,6 +48,17 @@ export default class Api {
       method: Method.DELETE,
     });
   }
+
+  sync(data) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
+  }
+
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);

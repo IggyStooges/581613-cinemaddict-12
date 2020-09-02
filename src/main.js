@@ -7,10 +7,18 @@ import {generateProfile} from "./mock/profile.js";
 import {render} from "./utils/render.js";
 import FilmsModel from "./model/films.js";
 import FiltersModel from "./model/filter.js";
-import Api from "./api.js";
+import Api from "./api/index.js";
 import {END_POINT, AUTHORIZATION, UpdateType} from "./const.js";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
+const STORE_PREFIX = `cinemmadict-localstorage`;
+const STORE_VER = `v12`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
+
 const filmsModel = new FilmsModel();
 
 const profile = generateProfile();
@@ -28,10 +36,10 @@ render(siteMain, filmsBoard);
 
 const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel);
 
-const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, api);
+const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, apiWithProvider);
 filmsBoardPresenter.init();
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
     mainNavPresenter.init();
@@ -41,4 +49,22 @@ api.getFilms()
     filmsModel.setFilms(UpdateType.INIT, []);
     mainNavPresenter.init();
     render(siteFooter, new NumberOfFilms(`No`));
+  });
+
+  window.addEventListener(`load`, () => {
+    navigator.serviceWorker.register(`./sw.js`)
+      .then(() => {
+        console.log(`ServiceWorker available`); // eslint-disable-line
+      }).catch(() => {
+        console.error(`ServiceWorker isn't available`); // eslint-disable-line
+      });
+  });
+
+  window.addEventListener(`online`, () => {
+    document.title = document.title.replace(` [offline]`, ``);
+    apiWithProvider.sync();
+  });
+
+  window.addEventListener(`offline`, () => {
+    document.title += ` [offline]`;
   });
