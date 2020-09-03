@@ -33,9 +33,9 @@ export const FiltersType = {
   FAVORITES: `favorites`
 };
 
-export const MenuItem = {
-  FILMS: `TASKS`,
-  STATISTICS: `STATISTICS`
+export const MenuMode = {
+  FILMS: `films`,
+  STATISTICS: `statistics`
 };
 
 export const AUTHORIZATION = `Basic nerjyvfib12bhH`;

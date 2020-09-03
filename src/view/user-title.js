@@ -1,38 +1,34 @@
-import {USER_TITLES} from "../const.js";
 import AbstractView from "./abstract.js";
+import {convertUserTitle} from "../utils/utils.js";
 
-const convertUserTitle = (numbersOfFilms) => {
-  if (numbersOfFilms === 0) {
-    return USER_TITLES[0];
-  } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
-    return USER_TITLES[1];
-  } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
-    return USER_TITLES[2];
-  } else if (numbersOfFilms > 20) {
-    return USER_TITLES[3];
-  }
-  return ``;
-};
-
-const createUserTitle = (profile) => {
-  const {numbersOfFilms, avatar} = profile;
-
+const createUserTitle = (numbersOfFilms) => {
   return (
     `<section class="header__profile profile">
       <p class="profile__rating">${convertUserTitle(numbersOfFilms)}</p>
-      <img class="profile__avatar" src="${avatar}" alt="Avatar" width="35" height="35">
+      <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
       </section>`
   );
 };
-
-
 export default class UserTitle extends AbstractView {
-  constructor(profile) {
+  constructor(numbersOfFilms) {
     super();
-    this._profile = profile;
+    this._numbersOfFilms = numbersOfFilms;
   }
 
   getTemplate() {
-    return createUserTitle(this._profile);
+    return createUserTitle(this._numbersOfFilms);
+  }
+
+  updateElement(newNumberOfFilms) {
+    this._numbersOfFilms = newNumberOfFilms;
+
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
   }
 }
