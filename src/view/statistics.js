@@ -10,8 +10,9 @@ const getTopGenre = (films) => getCountedGenres(films)[0].name;
 
 const BAR_HEIGHT = 50;
 
-let genres = [];
-let exlusiveGenres = [];
+const getExclusiveGenres = (films) => {
+  return Array.from(new Set(getGenres(films)));
+};
 
 const TIME_FILTER = {
   ALLTIME: {
@@ -49,7 +50,8 @@ const getWatchedFilmsByPeriod = (films, period) => {
 };
 
 const renderChart = (films, statisticCtx) => {
-  statisticCtx.height = BAR_HEIGHT * exlusiveGenres.length;
+
+  statisticCtx.height = BAR_HEIGHT * getExclusiveGenres(films).length;
 
   if (!films.length) {
     return `No movies`;
@@ -120,8 +122,7 @@ const getGenres = (films) => {
 };
 
 const getCountedGenres = (films) => {
-  genres = getGenres(films);
-  exlusiveGenres = Array.from(new Set(genres));
+  const exlusiveGenres = getExclusiveGenres(films);
 
   const values = exlusiveGenres.map((genre) =>
     films.filter((film) =>
@@ -129,15 +130,14 @@ const getCountedGenres = (films) => {
       .length);
 
   const genresCount = [];
+
   exlusiveGenres.forEach((genre, i) => genresCount.push(
       {
         name: genre,
         count: values[i],
       }));
 
-  const sortedGenresCount = genresCount.sort((a, b) => b.count - a.count);
-
-  return sortedGenresCount;
+  return genresCount.sort((a, b) => b.count - a.count);
 };
 
 const createStatisticFilterMarkup = (statisticFilter, isChecked) => {
@@ -148,7 +148,6 @@ const createStatisticFilterMarkup = (statisticFilter, isChecked) => {
     <label for="statistic-${label}" class="statistic__filters-label for="statistic-${label}">${name}</label>`
   );
 };
-
 
 const createStatisticsTemplate = (films, currentFilter) => {
   const duration = films.reduce((filmsDuration, film) => {

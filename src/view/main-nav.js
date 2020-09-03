@@ -1,15 +1,19 @@
 import AbstractView from "./abstract.js";
 import {MenuMode} from "../const.js";
 
+const isFilmsMenuMode = (mode) => {
+  return mode === MenuMode.FILMS;
+};
+
 const createMainNav = (data, currentFilterType, currentMenuMode) => {
   const {watchlist, favorites, watched, all} = data;
   return (
     `<nav class="main-navigation">
       <div class="main-navigation__items">
-        <a href="#all" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${!currentFilterType && currentMenuMode === MenuMode.FILMS ? `main-navigation__item--active` : ``}" data-filter-type="${all.type}">All movies</a>
-        <a href="#watchlist" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === watchlist.type && currentMenuMode === MenuMode.FILMS ? `main-navigation__item--active` : ``}" data-filter-type="${watchlist.type}">Watchlist <span class="main-navigation__item-count"">${watchlist.count}</span></a>
-        <a href="#history" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === watched.type && currentMenuMode === MenuMode.FILMS ? `main-navigation__item--active` : ``}" data-filter-type="${watched.type}">History <span class="main-navigation__item-count">${watched.count}</span></a>
-        <a href="#favorites" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === favorites.type && currentMenuMode === MenuMode.FILMS ? `main-navigation__item--active` : ``}" data-filter-type="${favorites.type}">Favorites <span class="main-navigation__item-count">${favorites.count}</span></a>
+        <a href="#all" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${!currentFilterType && isFilmsMenuMode(currentMenuMode) ? `main-navigation__item--active` : ``}" data-filter-type="${all.type}">All movies</a>
+        <a href="#watchlist" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === watchlist.type && isFilmsMenuMode(currentMenuMode) ? `main-navigation__item--active` : ``}" data-filter-type="${watchlist.type}">Watchlist <span class="main-navigation__item-count"">${watchlist.count}</span></a>
+        <a href="#history" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === watched.type && isFilmsMenuMode(currentMenuMode) ? `main-navigation__item--active` : ``}" data-filter-type="${watched.type}">History <span class="main-navigation__item-count">${watched.count}</span></a>
+        <a href="#favorites" data-nav="${MenuMode.FILMS}" class="main-navigation__item ${currentFilterType === favorites.type && isFilmsMenuMode(currentMenuMode) ? `main-navigation__item--active` : ``}" data-filter-type="${favorites.type}">Favorites <span class="main-navigation__item-count">${favorites.count}</span></a>
       </div>
       <a href="#stats" data-nav="${MenuMode.STATISTICS}" class="main-navigation__additional ${currentMenuMode === MenuMode.STATISTICS ? `main-navigation__additional--active` : ``}">Stats</a>
     </nav>`
