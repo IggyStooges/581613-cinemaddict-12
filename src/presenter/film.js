@@ -78,7 +78,7 @@ export default class FilmPresenter {
   _handleFavoriteClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {
           isFavorite: !this._film.isFavorite,
         })
@@ -128,9 +128,10 @@ export default class FilmPresenter {
   _handleWatchedClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {
           isWatched: !this._film.isWatched,
+          watchingDate: !this._film.isWatched ? new Date() : null
         })
     );
   }
@@ -138,7 +139,7 @@ export default class FilmPresenter {
   _handleWatchlistClick() {
     this._changeData(
         UserAction.UPDATE_FILM,
-        UpdateType.PATCH,
+        UpdateType.MINOR,
         Object.assign({}, this._film, {
           isWatchList: !this._film.isWatchList,
         })

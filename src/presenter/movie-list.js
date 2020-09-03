@@ -16,7 +16,7 @@ const FILM_COUNT_PER_STEP = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
 
 export default class MovieList {
-  constructor(filmsBoard, filmsModel, filtersModel, api) {
+  constructor(filmsBoard, filmsModel, filtersModel, apiWithProvider, api) {
     this._filtersModel = filtersModel;
     this._filmsModel = filmsModel;
     this._filmsBoard = filmsBoard;
@@ -24,6 +24,7 @@ export default class MovieList {
     this._extraSectionFilmCount = EXTRA_SECTIONS_FILMS_COUNT;
     this._isLoading = true;
     this._api = api;
+    this._apiWithProvider = apiWithProvider;
 
     this._sortMenuComponent = null;
     this._loadMoreButton = null;
@@ -43,12 +44,11 @@ export default class MovieList {
     this._handleModelChange = this._handleModelChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-
-    this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
   }
 
   init() {
     this._renderFilmsSection();
+    this._filmsContainer = this._filmsSection.getElement().querySelector(`.films-list__container`);
     this._renderFilmsBoard();
 
     this._filmsModel.addObserver(this._handleModelEvent);
@@ -59,11 +59,11 @@ export default class MovieList {
     this._clearFilmsBoard({resetRenderedFilmCount: true, resetSortType: true});
 
     remove(this._sortMenuComponent);
+    remove(this._filmsSection);
 
     this._filmsModel.removeObserver(this._handleModelEvent);
     this._filtersModel.removeObserver(this._handleModelEvent);
   }
-
 
   _getFilms() {
     const films = this._filmsModel.getFilms();
@@ -107,7 +107,7 @@ export default class MovieList {
         });
         break;
       default:
-        this._api.updateFilm(updateFilm).then((response) => {
+        this._apiWithProvider.updateFilm(updateFilm).then((response) => {
           const updatedFilm = Object.assign({}, response, {
             comments: updateFilm.comments
           });
@@ -260,9 +260,9 @@ export default class MovieList {
 
     // this._renderExtraSections();
     this._renderSortMenu();
-    this._renderFilms(films.slice(0, Math.min(filmsCount, FILM_COUNT_PER_STEP)));
+    this._renderFilms(films.slice(0, this._renderedFilmCount));
 
-    if (filmsCount > FILM_COUNT_PER_STEP) {
+    if (filmsCount > this._renderedFilmCount) {
       this._renderLoadMoreButton();
     }
   }

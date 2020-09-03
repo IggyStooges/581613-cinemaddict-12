@@ -1,24 +1,17 @@
 import AbstractView from "./abstract.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {convertUserTitle} from "../utils/utils.js"
+import {convertUserTitle} from "../utils/utils.js";
 import {filter} from "../utils/filter";
+import {FiltersType} from "../const.js";
+import moment from "moment";
 
 const getTopGenre = (films) => getCountedGenres(films)[0].name;
 
 const BAR_HEIGHT = 50;
 
-const GENRES = [
-  `Action`,
-  `Adventure`,
-  `Animation`,
-  `Comedy`,
-  `Drama`,
-  `Family`,
-  `Horror`,
-  `Sci-Fi`,
-  `Thriller`,
-];
+let genres = [];
+let exlusiveGenres = [];
 
 const TIME_FILTER = {
   ALLTIME: {
@@ -27,7 +20,7 @@ const TIME_FILTER = {
   },
   TODAY: {
     name: `Today`,
-    label: `today`,
+    label: `day`,
   },
   WEEK: {
     name: `Week`,
@@ -44,8 +37,7 @@ const TIME_FILTER = {
 };
 
 const getWatchedFilmsByPeriod = (films, period) => {
-  const watchedFilms = filter[`history`](films);
-  console.log(filter[`history`](films))
+  const watchedFilms = filter[FiltersType.WATCHED](films);
 
   if (period === TIME_FILTER.ALLTIME.label) {
     return watchedFilms;
@@ -56,8 +48,12 @@ const getWatchedFilmsByPeriod = (films, period) => {
   return watchedFilms.filter((film) => moment(film.watchingDate).isAfter(startOfPeriod));
 };
 
-const renderChart = (films, statisticCtx, genres) => {
-  statisticCtx.height = BAR_HEIGHT * genres.length;
+const renderChart = (films, statisticCtx) => {
+  statisticCtx.height = BAR_HEIGHT * exlusiveGenres.length;
+
+  if (!films.length) {
+    return `No movies`;
+  }
 
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
@@ -117,15 +113,23 @@ const renderChart = (films, statisticCtx, genres) => {
   });
 };
 
+const getGenres = (films) => {
+  const allGenres = films.map((film) => film.genre);
+
+  return allGenres.flat();
+};
+
 const getCountedGenres = (films) => {
-  const genres = film.genre;
-  const values = GENRES.map((genre) =>
+  genres = getGenres(films);
+  exlusiveGenres = Array.from(new Set(genres));
+
+  const values = exlusiveGenres.map((genre) =>
     films.filter((film) =>
       film.genre.includes(genre))
       .length);
 
   const genresCount = [];
-  GENRES.forEach((genre, i) => genresCount.push(
+  exlusiveGenres.forEach((genre, i) => genresCount.push(
       {
         name: genre,
         count: values[i],
@@ -136,11 +140,11 @@ const getCountedGenres = (films) => {
   return sortedGenresCount;
 };
 
-const createFilterMarkup = (filter, isCkecked) => {
-  const {name, label} = filter;
+const createStatisticFilterMarkup = (statisticFilter, isChecked) => {
+  const {name, label} = statisticFilter;
 
   return (
-    `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${label}" value="${label}" ${isCkecked ? `checked` : ``}>
+    `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${label}" value="${label}" ${isChecked ? `checked` : ``}>
     <label for="statistic-${label}" class="statistic__filters-label for="statistic-${label}">${name}</label>`
   );
 };
@@ -156,9 +160,9 @@ const createStatisticsTemplate = (films, currentFilter) => {
   const durationMinutes = duration % 60;
 
   let timeFiltersMarkup = ``;
-  for (const filter in TIME_FILTER) {
-    if (filter) {
-      timeFiltersMarkup = timeFiltersMarkup.concat(createFilterMarkup(TIME_FILTER[filter], currentFilter === TIME_FILTER[filter].label));
+  for (const timefilter in TIME_FILTER) {
+    if (timefilter) {
+      timeFiltersMarkup = timeFiltersMarkup.concat(createStatisticFilterMarkup(TIME_FILTER[timefilter], currentFilter === TIME_FILTER[timefilter].label));
     }
   }
 
@@ -197,9 +201,6 @@ const createStatisticsTemplate = (films, currentFilter) => {
   );
 };
 
-
-
-
 export default class StatisticsView extends AbstractView {
   constructor(films) {
     super();
@@ -207,58 +208,50 @@ export default class StatisticsView extends AbstractView {
     this._films = films;
     this._currentTimeFilter = TIME_FILTER.ALLTIME.label;
 
-    this._dateChangeHandler = this._dateChangeHandler.bind(this);
+    this._allWatchedFilms = getWatchedFilmsByPeriod(this._films, TIME_FILTER.ALLTIME.label);
 
-    this._setCharts();
+    this._changePeriodClickHandler = this._changePeriodClickHandler.bind(this);
+    this._setCharts = this._setCharts.bind(this);
+    this._ctx = this.getElement().querySelector(`.statistic__chart`);
+
+    this._setCharts(this._allWatchedFilms, this._ctx);
   }
 
-  removeElement() {
-    super.removeElement();
+  _changePeriodClickHandler(evt) {
+    evt.preventDefault();
+    this._currentTimeFilter = evt.target.value;
+    this._filmsByPeriod = getWatchedFilmsByPeriod(this._films, this._currentTimeFilter);
+    this.updateElement();
+  }
 
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
+  setPeriodClickHandler() {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`change`, this._changePeriodClickHandler);
   }
 
   getTemplate() {
     return createStatisticsTemplate(getWatchedFilmsByPeriod(this._films, this._currentTimeFilter), this._currentTimeFilter);
   }
 
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+
+    this.restoreHandlers();
+    this._setCharts(this._filmsByPeriod, this._ctx);
+  }
+
   restoreHandlers() {
-    this._setCharts();
-    this._setDatepicker();
+    this.setPeriodClickHandler();
+    this._ctx = this.getElement().querySelector(`.statistic__chart`);
   }
 
-  _dateChangeHandler([dateFrom, dateTo]) {
-    if (!dateFrom || !dateTo) {
-      return;
-    }
-
-    this.updateData({
-      dateFrom,
-      dateTo
-    });
-  }
-
-  _setDatepicker() {
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
-    }
-
-    this._datepicker = flatpickr(
-        this.getElement().querySelector(`.statistic__period-input`),
-        {
-          mode: `range`,
-          dateFormat: `j F`,
-          defaultDate: [this._data.dateFrom, this._data.dateTo],
-          onChange: this._dateChangeHandler
-        }
-    );
-  }
-
-  _setCharts() {
-
+  _setCharts(films, ctx) {
+    renderChart(films, ctx);
   }
 }

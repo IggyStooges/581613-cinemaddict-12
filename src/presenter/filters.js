@@ -2,14 +2,11 @@ import {render, RenderPosition, remove, replace} from "../utils/render.js";
 import MainNav from "../view/main-nav.js";
 import {filter} from "../utils/filter.js";
 import {FiltersType, UpdateType} from "../const.js";
-
-export const MenuItem = {
-  FILMS_BOARD: `films`,
-  STATISTICS: `statistics`
-};
+import StatisticsView from "../view/statistics.js";
+import {MenuMode} from "../const.js";
 
 export default class MainNavPresenter {
-  constructor(container, filtersModel, filmsModel, filmsBoard, statisticBoard) {
+  constructor(container, filtersModel, filmsModel, filmsBoard) {
     this._container = container;
     this._filtersModel = filtersModel;
     this._filmsModel = filmsModel;
@@ -19,25 +16,24 @@ export default class MainNavPresenter {
     this._currentFiltersType = null;
 
     this._filmsBoard = filmsBoard;
-    this._statisticBoard = statisticBoard;
 
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleFiltersTypeChange = this._handleFiltersTypeChange.bind(this);
 
     this._filmsModel.addObserver(this._handleModelEvent);
     this._filtersModel.addObserver(this._handleModelEvent);
+    this._currentMenuMode = MenuMode.FILMS;
   }
 
   init() {
     this._currentFiltersType = this._filtersModel.getFilter();
-
     const filters = this._getFilters();
     const prevFiltersComponent = this._filtersComponent;
 
-    this._filtersComponent = new MainNav(filters, this._currentFiltersType);
+    this._filtersComponent = new MainNav(filters, this._currentFiltersType, this._currentMenuMode);
 
     this._filtersComponent.setFiltersTypeChangeHandler(this._handleFiltersTypeChange);
-    this._setMenuChangeHandler(this._statisticBoard, this._filmsBoard);
+    this._setMenuChangeHandler();
 
     if (prevFiltersComponent === null) {
       render(this._container, this._filtersComponent, RenderPosition.BEFOREBEGIN);
@@ -60,25 +56,32 @@ export default class MainNavPresenter {
     this._filtersModel.setFilter(UpdateType.MAJOR, filtersType);
   }
 
-  _setMenuChangeHandler (statisticBoard, filmsBoard) {
+  _setMenuChangeHandler() {
     this._filtersComponent.setMenuClickHandler((e) => {
-      this._handleSiteMenuClick(e, statisticBoard, filmsBoard);
+      this._handleSiteMenuClick(e);
     });
     this._filtersComponent.setFiltersTypeChangeHandler(this._handleFiltersTypeChange);
   }
 
-  _handleSiteMenuClick(menuItem, statisticBoard, filmsBoard) {
+  _handleSiteMenuClick(menuItem) {
     switch (menuItem) {
-      case MenuItem.STATISTICS:
-        render(document.querySelector(`main`), statisticBoard);
-        filmsBoard.destroy();
+      case MenuMode.STATISTICS:
+        this._currentMenuMode = MenuMode.STATISTICS;
+        this._statisticBoard = new StatisticsView(this._filmsModel.getFilms());
+        this._statisticBoard.setPeriodClickHandler();
+        render(document.querySelector(`main`), this._statisticBoard);
+        this._filmsBoard.destroy();
         break;
       default:
-        remove(statisticBoard);
-        filmsBoard.init();
+        this._currentMenuMode = MenuMode.FILMS;
+        if (this._statisticBoard) {
+          remove(this._statisticBoard);
+        }
+        this._filmsBoard.init();
         break;
     }
-  };
+    this._handleModelEvent();
+  }
 
   getWatchedCount() {
     return this._getFilters().watched.count;

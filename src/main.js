@@ -3,14 +3,13 @@ import FilmsBoard from "./view/films-board.js";
 import MovieList from "./presenter/movie-list.js";
 import MainNavPresenter from "./presenter/filters.js";
 import NumberOfFilms from "./view/number-of-films.js";
-import {render, remove} from "./utils/render.js";
+import {render} from "./utils/render.js";
 import FilmsModel from "./model/films.js";
 import FiltersModel from "./model/filter.js";
 import Api from "./api/index.js";
-import { END_POINT, AUTHORIZATION, UpdateType } from "./const.js";
+import {END_POINT, AUTHORIZATION, UpdateType} from "./const.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
-import StatisticsView from "./view/statistics.js";
 
 const STORE_PREFIX = `cinemmadict-localstorage`;
 const STORE_VER = `v12`;
@@ -25,26 +24,29 @@ const filmsModel = new FilmsModel();
 const siteHeader = document.querySelector(`.header`);
 const siteMain = document.querySelector(`.main`);
 const siteFooter = document.querySelector(`.footer`);
-const filmsBoard = new FilmsBoard().getElement();
+const filmsBoard = new FilmsBoard();
 
 const filtersModel = new FiltersModel();
 
 render(siteMain, filmsBoard);
 
-const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, apiWithProvider);
+const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, apiWithProvider, api);
 filmsBoardPresenter.init();
+const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel, filmsBoardPresenter);
 
+mainNavPresenter.init();
 
 apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(UpdateType.INIT, films);
-    const statistics = new StatisticsView(films);
-    const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel, filmsBoardPresenter, statistics);
+    const userTitle = new UserTitle(mainNavPresenter.getWatchedCount());
 
-    mainNavPresenter.init();
-    render(siteHeader, new UserTitle(mainNavPresenter.getWatchedCount()));
+    filmsModel.addObserver(() => {
+      userTitle.updateElement(mainNavPresenter.getWatchedCount());
+    });
+
+    render(siteHeader, userTitle);
     render(siteFooter, new NumberOfFilms(films.length));
-
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
@@ -52,14 +54,14 @@ apiWithProvider.getFilms()
     render(siteFooter, new NumberOfFilms(`No`));
   });
 
-window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      console.log(`ServiceWorker available`);
-    }).catch(() => {
-      console.error(`ServiceWorker isn't available`);
-    });
-});
+// window.addEventListener(`load`, () => {
+//   navigator.serviceWorker.register(`/sw.js`)
+//     .then(() => {
+//       console.log(`ServiceWorker available`); // eslint-disable-line
+//     }).catch(() => {
+//       console.error(`ServiceWorker isn't available`); // eslint-disable-line
+//     });
+// });
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

@@ -14,10 +14,10 @@ export const generateRandomStringFromArray = (array) => {
   return array[randomIndex];
 };
 
-export const generateSetByArray = (array, max, min) => {
+export const generateSetByArray = (array) => {
   const newSet = new Set();
 
-  for (let i = min; i <= max; i++) {
+  for (let i = 0; i <= array.length; i++) {
     newSet.add(generateRandomStringFromArray(array));
   }
 
@@ -80,4 +80,3 @@ export const convertUserTitle = (numbersOfFilms) => {
   }
   return ``;
 };
-
