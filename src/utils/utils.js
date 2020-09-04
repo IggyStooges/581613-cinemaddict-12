@@ -34,13 +34,13 @@ export const isSuccessStatus = (status) => {
 
 export const convertUserTitle = (numbersOfFilms) => {
   if (numbersOfFilms === 0) {
-    return USER_TITLES[0];
+    return USER_TITLES.NONE;
   } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
-    return USER_TITLES[1];
+    return USER_TITLES.NOVICE;
   } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
-    return USER_TITLES[2];
+    return USER_TITLES.FAN;
   } else if (numbersOfFilms > 20) {
-    return USER_TITLES[3];
+    return USER_TITLES.MOVIE_BUFF;
   }
   return ``;
 };
