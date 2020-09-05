@@ -1,7 +1,7 @@
 import FilmsModel from "../model/films.js";
 
-const getSyncedFilms = (items) => {
-  return items.filter(({success}) => success)
+const getSyncedFilms = (films) => {
+  return films.filter(({success}) => success)
     .map(({payload}) => payload.film);
 };
 

@@ -1,5 +1,6 @@
 import AbstractView from "./abstract.js";
 import {SortType} from "../const.js";
+import {isEvtTargetNoLinkElement} from "../utils/utils.js";
 
 const createSortMenu = (currentSortType) => {
   return (
@@ -24,9 +25,7 @@ export default class SortMenu extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `A`) {
-      return;
-    }
+    isEvtTargetNoLinkElement(evt);
 
     evt.preventDefault();
     this._callback(evt.target.dataset.sortType);

@@ -26,7 +26,7 @@ export const render = (container, element, place = RenderPosition.BEFOREEND) => 
     case RenderPosition.AFTEREND:
       container.after(element);
       break;
-    case RenderPosition.BEFOREBEGIN:
+    default:
       container.before(element);
       break;
   }

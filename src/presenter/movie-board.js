@@ -1,12 +1,12 @@
-import {render, remove} from "../utils/render.js";
+import {render, remove, RenderPosition} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
 import ShowMoreButton from "../view/show-more-button.js";
 import TopRatedFilmsExtraSection from "../view/top-rated-section.js";
 import MostCommentedFilmsExtraSection from "../view/most-commented-section.js";
 import NoFilmsMessage from "../view/no-film-message.js";
 import SortMenu from "../view/sort-menu.js";
-import {RenderPosition} from "../utils/render.js";
 import {sortFilmDate, sortFilmRating, sortFilmComments} from "../utils/films.js";
+import {shuffleArray} from "../utils/utils.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 import FilmPresenter, {Error as FilmPresenterError} from "./film.js";
 import {filter} from "../utils/filter.js";
@@ -14,16 +14,6 @@ import LoadingView from "../view/loading.js";
 
 const FILM_COUNT_PER_STEP = 5;
 const EXTRA_SECTIONS_FILMS_COUNT = 2;
-
-const shuffleArray = (array) => {
-  const shuffledArray = array.slice();
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-
-  return shuffledArray;
-};
 
 const getAllIndicators = (films, indicator) => {
   return films.map((film) => film[indicator]);
@@ -36,6 +26,10 @@ const checkAllIndicatorNull = (films, indicator) => {
   }
 
   return false;
+};
+
+const checkAllIndicatorsEqual = (films, indicator) => {
+  return [...new Set(getAllIndicators(films, indicator))].length !== 1;
 };
 
 export default class MovieBoard {
@@ -113,33 +107,45 @@ export default class MovieBoard {
     render(this._filmsSection, this._NoFilmsMessage);
   }
 
+  _handleRemoveComment(updateType, updateFilm, updateCommentData) {
+    this._api.deleteComment(updateCommentData).then(() => {
+      this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
+    }).catch(() => {
+      this._presenterLists.forEach((presenterList) => {
+        presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.DELETING);
+      });
+    });
+  }
+
+  _handleAddComment(updateType, updateFilm, updateCommentData) {
+    this._api.addComment(updateFilm, updateCommentData).then((response) => {
+      this._filmsModel.addComment(updateType, updateFilm, response.comments);
+    }).catch(() => {
+      this._presenterLists.forEach((presenterList) => {
+        presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.ADDING);
+      });
+    });
+  }
+
+  _handleUpdateFilm(updateType, updateFilm) {
+    this._apiWithProvider.updateFilm(updateFilm).then((response) => {
+      const updatedFilm = Object.assign({}, response, {
+        comments: updateFilm.comments
+      });
+      this._filmsModel.updateFilm(updateType, updatedFilm);
+    });
+  }
+
   _handleViewAction(actionType, updateType, updateFilm, updateCommentData) {
     switch (actionType) {
       case UserAction.REMOVE_COMMENT:
-        this._api.deleteComment(updateCommentData).then(() => {
-          this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
-        }).catch(() => {
-          this._presenterLists.forEach((presenterList) => {
-            presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.DELETING);
-          });
-        });
+        this._handleRemoveComment(updateType, updateFilm, updateCommentData);
         break;
       case UserAction.ADD_COMMENT:
-        this._api.addComment(updateFilm, updateCommentData).then((response) => {
-          this._filmsModel.addComment(updateType, updateFilm, response.comments);
-        }).catch(() => {
-          this._presenterLists.forEach((presenterList) => {
-            presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.ADDING);
-          });
-        });
+        this._handleAddComment(updateType, updateFilm, updateCommentData);
         break;
       default:
-        this._apiWithProvider.updateFilm(updateFilm).then((response) => {
-          const updatedFilm = Object.assign({}, response, {
-            comments: updateFilm.comments
-          });
-          this._filmsModel.updateFilm(updateType, updatedFilm);
-        });
+        this._handleUpdateFilm(updateType, updateFilm);
         break;
     }
   }
@@ -277,7 +283,6 @@ export default class MovieBoard {
         presenter.destroy();
       });
 
-
     Object
       .values(this._mostCommentedFilmPresenterList)
       .forEach((presenter) => {
@@ -292,7 +297,14 @@ export default class MovieBoard {
         presenter.destroy();
       });
 
-    const removedComponents = [this._loadingComponent, this._sortMenuComponent, this._NoFilmsMessage, this._loadMoreButton, this._topRatedFilmsExtraSection, this._mostCommentedFilmsExtraSection];
+    const removedComponents = [
+      this._loadingComponent,
+      this._sortMenuComponent,
+      this._NoFilmsMessage,
+      this._loadMoreButton,
+      this._topRatedFilmsExtraSection,
+      this._mostCommentedFilmsExtraSection
+    ];
 
     for (let component of removedComponents) {
       remove(component);
@@ -317,10 +329,13 @@ export default class MovieBoard {
 
   _renderFilmsBoard() {
     const films = this._getFilms();
-    const shuffledArray = shuffleArray(films.slice()).slice(0, 2);
-    const topRatedFilms = [...new Set(getAllIndicators(films, `rating`))].length !== 1 ? films.slice().sort(sortFilmRating).reverse().slice(0, 2) : shuffledArray.slice(0, 2);
-    const mostCommentedFilms = [...new Set(getAllIndicators(films, `comments`))].length !== 1 ? films.slice().sort(sortFilmComments).reverse().slice(0, 2) : shuffledArray.slice(0, 2);
     const filmsCount = films.length;
+
+    const shuffledArray = shuffleArray(films.slice());
+    const sortedRatingFilms = films.slice().sort(sortFilmRating).reverse();
+    const sortedCommentsFilms = films.slice().sort(sortFilmComments).reverse();
+    const topRatedFilms = checkAllIndicatorsEqual(films, `rating`) ? sortedRatingFilms.slice(0, 2) : shuffledArray.slice(0, 2);
+    const mostCommentedFilms = checkAllIndicatorsEqual(films, `comments`) ? sortedCommentsFilms.slice(0, 2) : shuffledArray.slice(0, 2);
 
     if (this._isLoading) {
       this._renderLoading();

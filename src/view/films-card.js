@@ -3,22 +3,22 @@ import {parseFilmDuration, getReleaseDate, cutDescription} from "../utils/utils.
 
 const determineFavoriteClassName = (flag) => {
   const favoriteClassName = flag
-    ? `film-card__controls-item--favorite film-card__controls-item--active`
-    : `film-card__controls-item--favorite`;
+    ? `film-card__controls-item--active`
+    : ``;
   return favoriteClassName;
 };
 
 const determineWatchedClassName = (flag) => {
   const watchedClassName = flag
-    ? `film-card__controls-item--mark-as-watched film-card__controls-item--active`
-    : `film-card__controls-item--mark-as-watched`;
+    ? `film-card__controls-item--active`
+    : ``;
   return watchedClassName;
 };
 
 const determineWatcListClassName = (flag) => {
   const watcListClassName = flag
-    ? `film-card__controls-item--add-to-watchlist film-card__controls-item--active`
-    : `film-card__controls-item--add-to-watchlist`;
+    ? `film-card__controls-item--active`
+    : ``;
   return watcListClassName;
 };
 
@@ -27,9 +27,9 @@ const calculateRatingColor = (rating) => {
     return `poor`;
   } else if (rating >= 5 && rating < 8) {
     return `average`;
-  } else {
-    return `good`;
   }
+
+  return `good`;
 };
 
 const createFilmsCard = (film) => {
@@ -59,9 +59,9 @@ const createFilmsCard = (film) => {
       <p class="film-card__description">${cutDescription(description)}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <form class="film-card__controls">
-        <button class="film-card__controls-item button ${determineWatcListClassName(isWatchList)}">Add to watchlist</button>
-        <button class="film-card__controls-item button ${determineWatchedClassName(isWatched)}">Mark as watched</button>
-        <button class="film-card__controls-item button ${determineFavoriteClassName(isFavorite)}">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${determineWatcListClassName(isWatchList)}">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${determineWatchedClassName(isWatched)}">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite ${determineFavoriteClassName(isFavorite)}">Mark as favorite</button>
       </form>
     </article>`;
 };
