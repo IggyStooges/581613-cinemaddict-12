@@ -13,7 +13,7 @@ const SHAKE_ANIMATION_TIMEOUT = 600;
 
 const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
-  for (let comment of comments) {
+  for (const comment of comments) {
     if (typeof comment === `object`) {
       commentsList = commentsList.concat(
           `<li class="film-details__comment">

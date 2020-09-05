@@ -306,8 +306,8 @@ export default class MovieBoard {
       this._mostCommentedFilmsExtraSection
     ];
 
-    for (let component of removedComponents) {
-      remove(component);
+    for (let removedСomponent of removedComponents) {
+      remove(removedСomponent);
     }
 
     if (resetRenderedFilmCount) {
