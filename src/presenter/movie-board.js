@@ -306,7 +306,7 @@ export default class MovieBoard {
       this._mostCommentedFilmsExtraSection
     ];
 
-    for (let removedСomponent of removedComponents) {
+    for (const removedСomponent of removedComponents) {
       remove(removedСomponent);
     }
 
