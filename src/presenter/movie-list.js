@@ -29,8 +29,9 @@ const getAllIndicators = (films, indicator) => {
   return films.map((film) => film[indicator]);
 };
 
-const isAllIndicatorNull = (films, indicator) => {
-  if (getAllIndicators(films, indicator).every((element) => element === 0 || element.length === 0)) {
+const checkAllIndicatorNull = (films, indicator) => {
+  const isAllIndicatorNull = getAllIndicators(films, indicator).every((element) => element === 0 || element.length === 0);
+  if (isAllIndicatorNull) {
     return true;
   }
 
@@ -331,11 +332,11 @@ export default class MovieList {
 
     this._renderFilms(films.slice(0, this._renderedFilmCount), this._currentFilmModes);
 
-    if (!isAllIndicatorNull(films, `rating`)) {
+    if (!checkAllIndicatorNull(films, `rating`)) {
       this._renderTopRatedFilms(topRatedFilms, this._currentTopRatedFilmModes);
     }
 
-    if (!isAllIndicatorNull(films, `comments`)) {
+    if (!checkAllIndicatorNull(films, `comments`)) {
       this._renderMostCommentedFilms(mostCommentedFilms, this._currentMostCommentedFilmModes);
     }
 
