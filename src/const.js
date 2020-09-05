@@ -1,4 +1,9 @@
-export const USER_TITLES = [``, `novice`, `fan`, `movie buff`];
+export const USER_TITLES = {
+  NONE: ``,
+  NOVICE: `novice`,
+  FAN: `fan`,
+  MOVIE_BUFF: `movie buff`
+};
 
 export const SortType = {
   DEFAULT: `default`,
@@ -20,7 +25,6 @@ export const UserAction = {
 };
 
 export const UpdateType = {
-  PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`
