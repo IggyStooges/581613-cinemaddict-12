@@ -1,4 +1,4 @@
-export const USER_TITLES = {
+export const UserTitles = {
   NONE: ``,
   NOVICE: `novice`,
   FAN: `fan`,

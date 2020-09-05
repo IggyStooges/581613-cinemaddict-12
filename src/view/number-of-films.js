@@ -8,7 +8,6 @@ export const createNumberOfFilms = (number) => {
   );
 };
 
-
 export default class NumberOfFilms extends AbstractView {
   constructor(number) {
     super();

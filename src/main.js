@@ -1,7 +1,7 @@
 import UserTitle from "./view/user-title.js";
 import FilmsBoard from "./view/films-board.js";
-import MovieList from "./presenter/movie-list.js";
-import MainNavPresenter from "./presenter/filters.js";
+import MovieBoard from "./presenter/movie-board.js";
+import MainNavPresenter from "./presenter/nav.js";
 import NumberOfFilms from "./view/number-of-films.js";
 import {render} from "./utils/render.js";
 import FilmsModel from "./model/films.js";
@@ -30,7 +30,7 @@ const filtersModel = new FiltersModel();
 
 render(siteMain, filmsBoard);
 
-const filmsBoardPresenter = new MovieList(filmsBoard, filmsModel, filtersModel, apiWithProvider, api);
+const filmsBoardPresenter = new MovieBoard(filmsBoard, filmsModel, filtersModel, apiWithProvider, api);
 filmsBoardPresenter.init();
 const mainNavPresenter = new MainNavPresenter(siteMain, filtersModel, filmsModel, filmsBoardPresenter);
 

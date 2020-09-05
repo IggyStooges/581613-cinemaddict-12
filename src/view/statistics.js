@@ -6,15 +6,8 @@ import {filter} from "../utils/filter";
 import {FiltersType} from "../const.js";
 import moment from "moment";
 
-const getTopGenre = (films) => getCountedGenres(films)[0].name;
-
 const BAR_HEIGHT = 50;
-
-const getExclusiveGenres = (films) => {
-  return Array.from(new Set(getGenres(films)));
-};
-
-const TIME_FILTER = {
+const TimeFilter = {
   ALLTIME: {
     name: `All time`,
     label: `all-time`,
@@ -37,10 +30,17 @@ const TIME_FILTER = {
   },
 };
 
+const getTopGenre = (films) => getCountedGenres(films)[0].name;
+
+const getExclusiveGenres = (films) => {
+  return Array.from(new Set(getGenres(films)));
+};
+
+
 const getWatchedFilmsByPeriod = (films, period) => {
   const watchedFilms = filter[FiltersType.WATCHED](films);
 
-  if (period === TIME_FILTER.ALLTIME.label) {
+  if (period === TimeFilter.ALLTIME.label) {
     return watchedFilms;
   }
 
@@ -159,9 +159,9 @@ const createStatisticsTemplate = (films, currentFilter) => {
   const durationMinutes = duration % 60;
 
   let timeFiltersMarkup = ``;
-  for (const timefilter in TIME_FILTER) {
+  for (const timefilter in TimeFilter) {
     if (timefilter) {
-      timeFiltersMarkup = timeFiltersMarkup.concat(createStatisticFilterMarkup(TIME_FILTER[timefilter], currentFilter === TIME_FILTER[timefilter].label));
+      timeFiltersMarkup = timeFiltersMarkup.concat(createStatisticFilterMarkup(TimeFilter[timefilter], currentFilter === TimeFilter[timefilter].label));
     }
   }
 
@@ -205,9 +205,9 @@ export default class StatisticsView extends AbstractView {
     super();
 
     this._films = films;
-    this._currentTimeFilter = TIME_FILTER.ALLTIME.label;
+    this._currentTimeFilter = TimeFilter.ALLTIME.label;
 
-    this._allWatchedFilms = getWatchedFilmsByPeriod(this._films, TIME_FILTER.ALLTIME.label);
+    this._allWatchedFilms = getWatchedFilmsByPeriod(this._films, TimeFilter.ALLTIME.label);
 
     this._changePeriodClickHandler = this._changePeriodClickHandler.bind(this);
     this._setCharts = this._setCharts.bind(this);

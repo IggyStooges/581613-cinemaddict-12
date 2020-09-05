@@ -66,6 +66,10 @@ button {
   cursor: pointer;
 }
 
+fieldset {
+  border: none;
+}
+
 .header {
   align-items: center;
   box-sizing: border-box;

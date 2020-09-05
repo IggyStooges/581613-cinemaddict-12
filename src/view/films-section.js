@@ -1,6 +1,6 @@
 import AbstractView from "./abstract.js";
 
-export const createFilmsSection = () => {
+const createFilmsSection = () => {
   return (
     `<section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>

@@ -1,14 +1,5 @@
 import moment from "moment";
-import {SuccessHTTPStatusRange} from "../const.js";
-import {USER_TITLES} from "../const.js";
-
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
+import {SuccessHTTPStatusRange, UserTitles} from "../const.js";
 
 export const parseFilmDuration = (dataDuration) => {
   const time = moment.utc().startOf(`day`).add({minutes: dataDuration});
@@ -34,13 +25,13 @@ export const isSuccessStatus = (status) => {
 
 export const convertUserTitle = (numbersOfFilms) => {
   if (numbersOfFilms === 0) {
-    return USER_TITLES.NONE;
+    return UserTitles.NONE;
   } else if (numbersOfFilms >= 1 && numbersOfFilms <= 10) {
-    return USER_TITLES.NOVICE;
+    return UserTitles.NOVICE;
   } else if (numbersOfFilms >= 11 && numbersOfFilms <= 20) {
-    return USER_TITLES.FAN;
+    return UserTitles.FAN;
   } else if (numbersOfFilms > 20) {
-    return USER_TITLES.MOVIE_BUFF;
+    return UserTitles.MOVIE_BUFF;
   }
   return ``;
 };

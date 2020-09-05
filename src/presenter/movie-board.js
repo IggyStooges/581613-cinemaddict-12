@@ -38,7 +38,7 @@ const checkAllIndicatorNull = (films, indicator) => {
   return false;
 };
 
-export default class MovieList {
+export default class MovieBoard {
   constructor(filmsBoard, filmsModel, filtersModel, apiWithProvider, api) {
     this._filtersModel = filtersModel;
     this._filmsModel = filmsModel;
@@ -119,14 +119,18 @@ export default class MovieList {
         this._api.deleteComment(updateCommentData).then(() => {
           this._filmsModel.deleteComment(updateType, updateFilm, updateCommentData);
         }).catch(() => {
-          this._filmPresenterList[updateFilm.id].setErrorHandler(FilmPresenterError.DELETING);
+          this._presenterLists.forEach((presenterList) => {
+            presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.DELETING);
+          });
         });
         break;
       case UserAction.ADD_COMMENT:
         this._api.addComment(updateFilm, updateCommentData).then((response) => {
           this._filmsModel.addComment(updateType, updateFilm, response.comments);
         }).catch(() => {
-          this._filmPresenterList[updateFilm.id].setErrorHandler(FilmPresenterError.ADDING);
+          this._presenterLists.forEach((presenterList) => {
+            presenterList[updateFilm.id].setErrorHandler(FilmPresenterError.ADDING);
+          });
         });
         break;
       default:
@@ -156,7 +160,7 @@ export default class MovieList {
         this._renderFilmsBoard();
         break;
       default:
-        [this._filmPresenterList, this._topRatedFilmPresenterList, this._mostCommentedFilmPresenterList].forEach((presenterList) => {
+        this._presenterLists.forEach((presenterList) => {
           presenterList[film.id].init(film);
         });
         break;
@@ -339,6 +343,8 @@ export default class MovieList {
     if (!checkAllIndicatorNull(films, `comments`)) {
       this._renderMostCommentedFilms(mostCommentedFilms, this._currentMostCommentedFilmModes);
     }
+
+    this._presenterLists = [this._filmPresenterList, this._mostCommentedFilmPresenterList, this._topRatedFilmPresenterList];
 
     if (filmsCount > this._renderedFilmCount) {
       this._renderLoadMoreButton();
