@@ -2,7 +2,7 @@ import {render, RenderPosition, remove, replace} from "../utils/render.js";
 import MainNav from "../view/main-nav.js";
 import {filter} from "../utils/filter.js";
 import {FiltersType, UpdateType} from "../const.js";
-import StatisticsView from "../view/statistics.js";
+import Statistics from "../view/statistics.js";
 import {MenuMode} from "../const.js";
 
 export default class MainNavPresenter {
@@ -67,7 +67,7 @@ export default class MainNavPresenter {
     switch (menuItem) {
       case MenuMode.STATISTICS:
         this._currentMenuMode = MenuMode.STATISTICS;
-        this._statisticBoard = new StatisticsView(this._filmsModel.getFilms());
+        this._statisticBoard = new Statistics(this._filmsModel.getFilms());
         this._statisticBoard.setPeriodClickHandler();
         render(document.querySelector(`main`), this._statisticBoard);
         this._filmsBoard.destroy();

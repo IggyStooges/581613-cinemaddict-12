@@ -1,4 +1,4 @@
-import FilmsModel from "../model/films.js";
+import FilmsModel from "../model/films-model.js";
 
 const getSyncedFilms = (films) => {
   return films.filter(({success}) => success)

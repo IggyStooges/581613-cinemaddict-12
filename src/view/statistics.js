@@ -7,6 +7,7 @@ import {FiltersType} from "../const.js";
 import moment from "moment";
 
 const BAR_HEIGHT = 50;
+const MINUTES_PER_HOUR = 60;
 const TimeFilter = {
   ALLTIME: {
     name: `All time`,
@@ -50,7 +51,6 @@ const getWatchedFilmsByPeriod = (films, period) => {
 };
 
 const renderChart = (films, statisticCtx) => {
-
   statisticCtx.height = BAR_HEIGHT * getExclusiveGenres(films).length;
 
   if (!films.length) {
@@ -155,8 +155,8 @@ const createStatisticsTemplate = (films, currentFilter) => {
     return filmsDuration;
   }, 0);
 
-  const durationHours = Math.floor(duration / 60);
-  const durationMinutes = duration % 60;
+  const durationHours = Math.floor(duration / MINUTES_PER_HOUR);
+  const durationMinutes = duration % MINUTES_PER_HOUR;
 
   let timeFiltersMarkup = ``;
   for (const timefilter in TimeFilter) {
@@ -200,7 +200,7 @@ const createStatisticsTemplate = (films, currentFilter) => {
   );
 };
 
-export default class StatisticsView extends AbstractView {
+export default class Statistics extends AbstractView {
   constructor(films) {
     super();
 

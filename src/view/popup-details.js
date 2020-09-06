@@ -10,6 +10,7 @@ import {
 import {Emojies} from "../const.js";
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
+const ENTER_EVT_KEY = `Enter`;
 
 const fillCommentsList = (comments, filmId) => {
   let commentsList = ``;
@@ -171,7 +172,7 @@ export default class PopupFilmDetails extends AbstractView {
 
     this._film = film;
     this._emojie = ``;
-    this._clickHandler = this._clickHandler.bind(this);
+    this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._emojiesToggleHandler = this._emojiesToggleHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
@@ -228,7 +229,7 @@ export default class PopupFilmDetails extends AbstractView {
     return createPopupFilmDetails(this._film, this._emojie);
   }
 
-  _clickHandler(evt) {
+  _closeButtonClickHandler(evt) {
     evt.preventDefault();
     this._callback();
   }
@@ -273,7 +274,7 @@ export default class PopupFilmDetails extends AbstractView {
     this._callback = callback;
     this.getElement()
       .querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, this._clickHandler);
+      .addEventListener(`click`, this._closeButtonClickHandler);
   }
 
   _deleteCommentHandler(evt) {
@@ -313,7 +314,7 @@ export default class PopupFilmDetails extends AbstractView {
     this.getElement()
       .querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey)) {
+        if (evt.key === ENTER_EVT_KEY && (evt.ctrlKey || evt.metaKey)) {
           if (!this._emojie || !this._commentText) {
             this.getElement().querySelector(`.film-details__new-comment`).style.outline = `2px solid red`;
             throw new Error(`Can't submit fill comment area`);

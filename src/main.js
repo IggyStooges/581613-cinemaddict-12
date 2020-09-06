@@ -4,7 +4,7 @@ import MovieBoard from "./presenter/movie-board.js";
 import MainNavPresenter from "./presenter/nav.js";
 import NumberOfFilms from "./view/number-of-films.js";
 import {render} from "./utils/render.js";
-import FilmsModel from "./model/films.js";
+import FilmsModel from "./model/films-model.js";
 import FiltersModel from "./model/filter.js";
 import Api from "./api/api.js";
 import {END_POINT, AUTHORIZATION, UpdateType} from "./const.js";
@@ -55,12 +55,12 @@ apiWithProvider.getFilms()
     render(siteFooter, new NumberOfFilms(`No`));
   });
 
-window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {}).catch(() => {
-      throw new Error(`ServiceWorker isn't available`);
-    });
-});
+// window.addEventListener(`load`, () => {
+//   navigator.serviceWorker.register(`/sw.js`)
+//     .then(() => {}).catch(() => {
+//       throw new Error(`ServiceWorker isn't available`);
+//     });
+// });
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

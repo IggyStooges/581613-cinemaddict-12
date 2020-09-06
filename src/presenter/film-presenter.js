@@ -6,19 +6,6 @@ import Api from "../api/api.js";
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
-export const blockedCardsIfPopupOpened = (cards, isBlocked) => {
-    for (const card of cards) {
-      const activatePopupElements = [card.querySelector(`.film-card__poster`), card.querySelector(`.film-card__title`), card.querySelector(`.film-card__comments`)]
-      for (const element of activatePopupElements) {
-        if (isBlocked) {
-          element.style.pointerEvents = `none`;
-        } else {
-          element.style = ``;
-        }
-      }
-    };
-}
-
 const Mode = {
   CARD: `CARD`,
   POPUP: `POPUP`
@@ -41,7 +28,8 @@ export default class FilmPresenter {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
 
     this._deletePopup = this._deletePopup.bind(this);
-    this._escKeyDown = this._escKeyDown.bind(this);
+    this._renderPopup = this._renderPopup.bind(this);
+    this._closePopupByEscKeyDown = this._closePopupByEscKeyDown.bind(this);
     this._changeData = changeData;
     this._mode = Mode.CARD;
     this._restoreModes = restoreMode;
@@ -164,11 +152,7 @@ export default class FilmPresenter {
   }
 
   _renderFilm() {
-    [`.film-card__comments`, `.film-card__title`, `.film-card__poster`].forEach((query) => {
-      this._filmComponent.setClickHandler(query, () => {
-        this._renderPopup();
-      });
-    });
+    this._filmComponent.setOpenPopupClickHandler(this._renderPopup);
 
     this._filmComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
@@ -177,11 +161,11 @@ export default class FilmPresenter {
     render(this._filmsContainer, this._filmComponent);
   }
 
-  _escKeyDown(evt) {
+  _closePopupByEscKeyDown(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       this._deletePopup();
-      document.removeEventListener(`keydown`, this._escKeyDown);
+      document.removeEventListener(`keydown`, this._closePopupByEscKeyDown);
     }
   }
 
@@ -190,17 +174,30 @@ export default class FilmPresenter {
     remove(this._filmPopupComponent);
   }
 
+  setBlockForPopupOpenElements(cards, isBlocked) {
+    for (const card of cards) {
+      const activatePopupElements = this._filmComponent.getElementsOpenedPopup(card);
+      for (const element of activatePopupElements) {
+        if (isBlocked) {
+          element.style.pointerEvents = `none`;
+        } else {
+          element.style = ``;
+        }
+      }
+    };
+  }
+
   _deletePopup() {
     remove(this._filmPopupComponent);
-    document.removeEventListener(`keydown`, this._escKeyDown);
+    document.removeEventListener(`keydown`, this._closePopupByEscKeyDown);
     this._mode = Mode.CARD;
-    blockedCardsIfPopupOpened(this._filmsBoard.querySelectorAll(`.film-card`), false);
+    this.setBlockForPopupOpenElements(this._filmsBoard.querySelectorAll(`.film-card`), false);
   }
 
   _renderPopup() {
     this._mode = Mode.POPUP;
 
-    blockedCardsIfPopupOpened(this._filmsBoard.querySelectorAll(`.film-card`), true);
+    this.setBlockForPopupOpenElements(this._filmsBoard.querySelectorAll(`.film-card`), true);
 
     api.getComments(this._film.id)
     .then((comments) => {
@@ -220,6 +217,6 @@ export default class FilmPresenter {
       this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
       render(document.querySelector(`body`), this._filmPopupComponent);
     });
-    document.addEventListener(`keydown`, this._escKeyDown);
+    document.addEventListener(`keydown`, this._closePopupByEscKeyDown);
   }
 }
