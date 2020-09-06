@@ -6,7 +6,7 @@ import NumberOfFilms from "./view/number-of-films.js";
 import {render} from "./utils/render.js";
 import FilmsModel from "./model/films.js";
 import FiltersModel from "./model/filter.js";
-import Api from "./api/index.js";
+import Api from "./api/api.js";
 import {END_POINT, AUTHORIZATION, UpdateType} from "./const.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
@@ -48,7 +48,8 @@ apiWithProvider.getFilms()
     render(siteHeader, userTitle);
     render(siteFooter, new NumberOfFilms(films.length));
   })
-  .catch(() => {
+  .catch((e) => {
+    console.log(e)
     filmsModel.setFilms(UpdateType.INIT, []);
     mainNavPresenter.init();
     render(siteFooter, new NumberOfFilms(`No`));

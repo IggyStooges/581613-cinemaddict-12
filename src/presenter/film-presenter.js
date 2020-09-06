@@ -2,9 +2,22 @@ import {render, replace, remove} from "../utils/render.js";
 import {UserAction, UpdateType, END_POINT, AUTHORIZATION} from "../const.js";
 import PopupFilmDetails from "../view/popup-details.js";
 import FilmsCard from "../view/films-card.js";
-import Api from "../api/index.js";
+import Api from "../api/api.js";
 
 const api = new Api(END_POINT, AUTHORIZATION);
+
+export const blockedCardsIfPopupOpened = (cards, isBlocked) => {
+    for (const card of cards) {
+      const activatePopupElements = [card.querySelector(`.film-card__poster`), card.querySelector(`.film-card__title`), card.querySelector(`.film-card__comments`)]
+      for (const element of activatePopupElements) {
+        if (isBlocked) {
+          element.style.pointerEvents = `none`;
+        } else {
+          element.style = ``;
+        }
+      }
+    };
+}
 
 const Mode = {
   CARD: `CARD`,
@@ -17,8 +30,9 @@ export const Error = {
 };
 
 export default class FilmPresenter {
-  constructor(filmsBoard, changeData, restoreMode) {
-    this._filmsBoard = filmsBoard;
+  constructor(filmsBoard, filmsContainer, changeData, restoreMode) {
+    this._filmsBoard = filmsBoard.getElement();
+    this._filmsContainer = filmsContainer;
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
@@ -160,7 +174,7 @@ export default class FilmPresenter {
     this._filmComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmComponent.setWatchedClickHandler(this._handleWatchedClick);
 
-    render(this._filmsBoard, this._filmComponent);
+    render(this._filmsContainer, this._filmComponent);
   }
 
   _escKeyDown(evt) {
@@ -180,10 +194,13 @@ export default class FilmPresenter {
     remove(this._filmPopupComponent);
     document.removeEventListener(`keydown`, this._escKeyDown);
     this._mode = Mode.CARD;
+    blockedCardsIfPopupOpened(this._filmsBoard.querySelectorAll(`.film-card`), false);
   }
 
   _renderPopup() {
     this._mode = Mode.POPUP;
+
+    blockedCardsIfPopupOpened(this._filmsBoard.querySelectorAll(`.film-card`), true);
 
     api.getComments(this._film.id)
     .then((comments) => {

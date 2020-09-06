@@ -1,4 +1,4 @@
-import AbstractView from "./abstract.js";
+import AbstractView from "./abstract-view.js";
 import {convertUserTitle} from "../utils/utils.js";
 
 const createUserTitle = (numbersOfFilms) => {

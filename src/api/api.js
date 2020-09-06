@@ -1,4 +1,4 @@
-import FilmsModel from "../model/films.js";
+import FilmsModel from "../model/films-model.js";
 import {apiHeaders, Method} from "../const.js";
 import {isSuccessStatus} from "../utils/utils.js";
 

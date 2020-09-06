@@ -1,5 +1,5 @@
 import he from "he";
-import AbstractView from "./abstract.js";
+import AbstractView from "./abstract-view.js";
 import {render, createElement} from "../utils/render.js";
 import {
   parseFilmDuration,

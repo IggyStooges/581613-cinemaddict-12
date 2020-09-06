@@ -1,14 +1,14 @@
 import {render, remove, RenderPosition} from "../utils/render.js";
 import FilmsSection from "../view/films-section.js";
 import ShowMoreButton from "../view/show-more-button.js";
-import TopRatedFilmsExtraSection from "../view/top-rated-section.js";
-import MostCommentedFilmsExtraSection from "../view/most-commented-section.js";
+import TopRatedSection from "../view/top-rated-section.js";
+import MostCommentedSection from "../view/most-commented-section.js";
 import NoFilmsMessage from "../view/no-film-message.js";
 import SortMenu from "../view/sort-menu.js";
 import {sortFilmDate, sortFilmRating, sortFilmComments} from "../utils/films.js";
 import {shuffleArray} from "../utils/utils.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
-import FilmPresenter, {Error as FilmPresenterError} from "./film.js";
+import FilmPresenter, {Error as FilmPresenterError} from "./film-presenter.js";
 import {filter} from "../utils/filter.js";
 import LoadingView from "../view/loading.js";
 
@@ -47,8 +47,8 @@ export default class MovieBoard {
     this._loadMoreButton = null;
 
     this._filmsSection = new FilmsSection();
-    this._topRatedFilmsExtraSection = new TopRatedFilmsExtraSection();
-    this._mostCommentedFilmsExtraSection = new MostCommentedFilmsExtraSection();
+    this._topRatedFilmsExtraSection = new TopRatedSection();
+    this._mostCommentedFilmsExtraSection = new MostCommentedSection();
     this._NoFilmsMessage = new NoFilmsMessage();
     this._loadingComponent = new LoadingView();
 
@@ -178,7 +178,7 @@ export default class MovieBoard {
   }
 
   _initFilm(film, mode, presenterList, container) {
-    const filmPresenter = new FilmPresenter(container, this._handleViewAction, mode);
+    const filmPresenter = new FilmPresenter(this._filmsBoard, container, this._handleViewAction, mode);
     filmPresenter.init(film);
     presenterList[film.id] = filmPresenter;
   }

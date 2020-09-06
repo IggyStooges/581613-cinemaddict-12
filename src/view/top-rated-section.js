@@ -1,6 +1,6 @@
-import AbstractView from "./abstract.js";
+import AbstractView from "./abstract-view.js";
 
-const createTopRatedFilmsExtraSection = () => {
+const createTopRatedSection = () => {
   return (
     `<section class="films-list--extra films-list--top-rated">
       <h2 class="films-list__title">Top rated</h2>
@@ -9,8 +9,8 @@ const createTopRatedFilmsExtraSection = () => {
     </section>`
   );
 };
-export default class TopRatedFilmsExtraSection extends AbstractView {
+export default class TopRatedSection extends AbstractView {
   getTemplate() {
-    return createTopRatedFilmsExtraSection();
+    return createTopRatedSection();
   }
 }

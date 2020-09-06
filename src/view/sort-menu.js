@@ -1,4 +1,4 @@
-import AbstractView from "./abstract.js";
+import AbstractView from "./abstract-view.js";
 import {SortType} from "../const.js";
 import {isEvtTargetNoLinkElement} from "../utils/utils.js";
 
