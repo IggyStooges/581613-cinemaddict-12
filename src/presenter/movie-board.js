@@ -178,7 +178,7 @@ export default class MovieBoard {
   }
 
   _initFilm(film, mode, presenterList, container) {
-    const filmPresenter = new FilmPresenter(this._filmsBoard, container, this._handleViewAction, mode);
+    const filmPresenter = new FilmPresenter(container, this._handleViewAction, mode);
     filmPresenter.init(film);
     presenterList[film.id] = filmPresenter;
   }

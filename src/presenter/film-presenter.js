@@ -18,20 +18,23 @@ const EscEvtKeys = {
   ESC: `Esc`
 };
 
-export const setBlockForCardsOnOpenPopup = (board, isBlocked) => {
-  const cards = board.querySelectorAll(`.film-card`);
-  for (const card of cards) {
+const setBoardBlockOnOpenPopup = (isBlocked = true) => {
+  const blockedSections = [
+    document.querySelector(`.main-navigation`),
+    document.querySelector(`.main`)
+  ];
+
+  for (const section of blockedSections) {
     if (isBlocked) {
-      card.style.pointerEvents = `none`;
+      section.style.pointerEvents = `none`;
     } else {
-      card.style = ``;
+      section.style = ``;
     }
   }
 };
 
 export default class FilmPresenter {
-  constructor(filmsBoard, filmsContainer, changeData, restoreMode) {
-    this._filmsBoard = filmsBoard.getElement();
+  constructor(filmsContainer, changeData, restoreMode) {
     this._filmsContainer = filmsContainer;
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleWatchedClick = this._handleWatchedClick.bind(this);
@@ -59,7 +62,7 @@ export default class FilmPresenter {
       const index = this._restoreModes.findIndex((mode) => mode.id === this._film.id);
 
       if (this._restoreModes[index] && this._restoreModes[index].mode === Mode.POPUP) {
-        setBlockForCardsOnOpenPopup(this._filmsBoard, true);
+        setBoardBlockOnOpenPopup();
         this._renderPopup();
       }
     }
@@ -192,12 +195,12 @@ export default class FilmPresenter {
     remove(this._filmPopupComponent);
     document.removeEventListener(`keydown`, this._closePopupByEscKeyDown);
     this._mode = Mode.CARD;
-    setBlockForCardsOnOpenPopup(this._filmsBoard, false);
+    setBoardBlockOnOpenPopup(false);
   }
 
   _renderPopup() {
     this._mode = Mode.POPUP;
-    setBlockForCardsOnOpenPopup(this._filmsBoard, true);
+    setBoardBlockOnOpenPopup();
 
     this._filmPopupComponent = new PopupFilmDetails(this._film);
     render(document.querySelector(`body`), this._filmPopupComponent);
