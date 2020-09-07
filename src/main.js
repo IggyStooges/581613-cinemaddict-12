@@ -72,7 +72,6 @@ apiWithProvider.getFilms()
     render(siteFooter, new NumberOfFilms(`No`));
   });
 
-
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
     .then(() => {}).catch(() => {
