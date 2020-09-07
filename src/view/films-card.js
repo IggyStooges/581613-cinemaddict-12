@@ -71,7 +71,7 @@ export default class FilmsCard extends AbstractView {
     super();
 
     this._film = film;
-    this._openPopupElementClickHandler = this._openPopupElementClickHandler.bind(this);
+    this._openPopupElementsClickHandler = this._openPopupElementsClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._watchedClickHandler = this._watchedClickHandler.bind(this);
@@ -98,26 +98,25 @@ export default class FilmsCard extends AbstractView {
     this._watchedClick();
   }
 
-  _openPopupElementClickHandler(evt) {
+  _openPopupElementsClickHandler(evt) {
     evt.preventDefault();
-    console.log(1111)
     this._callback();
   }
 
-  getElementsOpenedPopup (cardElement = this._cardElement) {
+  _getElementsOpenedPopup(cardElement = this._cardElement) {
     return [
       cardElement.querySelector(`.film-card__comments`),
       cardElement.querySelector(`.film-card__title`),
       cardElement.querySelector(`.film-card__poster`)
-    ]
+    ];
   }
 
   setOpenPopupClickHandler(callback) {
     this._callback = callback;
 
-    this.getElementsOpenedPopup().forEach(element => {
-      element.addEventListener(`click`, this._openPopupElementClickHandler);
-    })
+    this._getElementsOpenedPopup().forEach((element) => {
+      element.addEventListener(`click`, this._openPopupElementsClickHandler);
+    });
   }
 
   setFavoriteClickHandler(callback) {

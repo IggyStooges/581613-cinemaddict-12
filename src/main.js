@@ -38,29 +38,47 @@ mainNavPresenter.init();
 
 apiWithProvider.getFilms()
   .then((films) => {
-    filmsModel.setFilms(UpdateType.INIT, films);
-    const userTitle = new UserTitle(mainNavPresenter.getWatchedCount());
+    const commentsPromises = [];
 
-    filmsModel.addObserver(() => {
-      userTitle.updateElement(mainNavPresenter.getWatchedCount());
+    films.forEach((element) => {
+      commentsPromises.push(api.getComments(element.id));
     });
-
-    render(siteHeader, userTitle);
-    render(siteFooter, new NumberOfFilms(films.length));
+    Promise.all(commentsPromises)
+    .then((receivedComments) => {
+      const uploadedFilms = [];
+      for (let film of films) {
+        film = Object.assign({}, film, {
+          comments: receivedComments[[Number(film.id)]]
+        });
+        uploadedFilms.push(film);
+      }
+      filmsModel.setFilms(UpdateType.INIT, uploadedFilms);
+    })
+    .catch(() => {
+      filmsModel.setFilms(UpdateType.INIT, films);
+    })
+    .finally(() => {
+      const userTitle = new UserTitle(mainNavPresenter.getWatchedCount());
+      filmsModel.addObserver(() => {
+        userTitle.updateElement(mainNavPresenter.getWatchedCount());
+      });
+      render(siteHeader, userTitle);
+      render(siteFooter, new NumberOfFilms(films.length));
+    });
   })
-  .catch((e) => {
-    console.log(e)
+  .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
     mainNavPresenter.init();
     render(siteFooter, new NumberOfFilms(`No`));
   });
 
-// window.addEventListener(`load`, () => {
-//   navigator.serviceWorker.register(`/sw.js`)
-//     .then(() => {}).catch(() => {
-//       throw new Error(`ServiceWorker isn't available`);
-//     });
-// });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {}).catch(() => {
+      throw new Error(`ServiceWorker isn't available`);
+    });
+});
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

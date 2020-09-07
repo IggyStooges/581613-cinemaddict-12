@@ -297,6 +297,8 @@ export default class MovieBoard {
         presenter.destroy();
       });
 
+    this._allCurrentModes = [...this._currentFilmModes, ...this._currentTopRatedFilmModes, ...this._currentMostCommentedFilmModes];
+
     const removedComponents = [
       this._loadingComponent,
       this._sortMenuComponent,
@@ -306,8 +308,8 @@ export default class MovieBoard {
       this._mostCommentedFilmsExtraSection
     ];
 
-    for (const removedСomponent of removedComponents) {
-      remove(removedСomponent);
+    for (const removedРЎomponent of removedComponents) {
+      remove(removedРЎomponent);
     }
 
     if (resetRenderedFilmCount) {
@@ -346,6 +348,7 @@ export default class MovieBoard {
       this._renderNoFilmsMessage();
       return;
     }
+
 
     this._renderSortMenu();
 

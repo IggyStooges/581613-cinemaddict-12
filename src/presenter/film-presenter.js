@@ -1,12 +1,9 @@
 import {render, replace, remove} from "../utils/render.js";
-import {UserAction, UpdateType, END_POINT, AUTHORIZATION} from "../const.js";
-import PopupFilmDetails from "../view/popup-details.js";
+import {UserAction, UpdateType} from "../const.js";
+import PopupFilmDetails from "../view/popup-film-details.js";
 import FilmsCard from "../view/films-card.js";
-import Api from "../api/api.js";
 
-const api = new Api(END_POINT, AUTHORIZATION);
-
-const Mode = {
+export const Mode = {
   CARD: `CARD`,
   POPUP: `POPUP`
 };
@@ -14,6 +11,22 @@ const Mode = {
 export const Error = {
   ADDING: `ADDING`,
   DELETING: `DELETING`
+};
+
+const EscEvtKeys = {
+  ESCAPE: `Escape`,
+  ESC: `Esc`
+};
+
+export const setBlockForCardsOnOpenPopup = (board, isBlocked) => {
+  const cards = board.querySelectorAll(`.film-card`);
+  for (const card of cards) {
+    if (isBlocked) {
+      card.style.pointerEvents = `none`;
+    } else {
+      card.style = ``;
+    }
+  }
 };
 
 export default class FilmPresenter {
@@ -46,6 +59,7 @@ export default class FilmPresenter {
       const index = this._restoreModes.findIndex((mode) => mode.id === this._film.id);
 
       if (this._restoreModes[index] && this._restoreModes[index].mode === Mode.POPUP) {
+        setBlockForCardsOnOpenPopup(this._filmsBoard, true);
         this._renderPopup();
       }
     }
@@ -162,7 +176,7 @@ export default class FilmPresenter {
   }
 
   _closePopupByEscKeyDown(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (evt.key === EscEvtKeys.ESCAPE || evt.key === EscEvtKeys.ESC) {
       evt.preventDefault();
       this._deletePopup();
       document.removeEventListener(`keydown`, this._closePopupByEscKeyDown);
@@ -174,49 +188,26 @@ export default class FilmPresenter {
     remove(this._filmPopupComponent);
   }
 
-  setBlockForPopupOpenElements(cards, isBlocked) {
-    for (const card of cards) {
-      const activatePopupElements = this._filmComponent.getElementsOpenedPopup(card);
-      for (const element of activatePopupElements) {
-        if (isBlocked) {
-          element.style.pointerEvents = `none`;
-        } else {
-          element.style = ``;
-        }
-      }
-    };
-  }
-
   _deletePopup() {
     remove(this._filmPopupComponent);
     document.removeEventListener(`keydown`, this._closePopupByEscKeyDown);
     this._mode = Mode.CARD;
-    this.setBlockForPopupOpenElements(this._filmsBoard.querySelectorAll(`.film-card`), false);
+    setBlockForCardsOnOpenPopup(this._filmsBoard, false);
   }
 
   _renderPopup() {
     this._mode = Mode.POPUP;
+    setBlockForCardsOnOpenPopup(this._filmsBoard, true);
 
-    this.setBlockForPopupOpenElements(this._filmsBoard.querySelectorAll(`.film-card`), true);
-
-    api.getComments(this._film.id)
-    .then((comments) => {
-      const filmWithComments = Object.assign({}, this._film, {comments});
-      this._filmPopupComponent = new PopupFilmDetails(filmWithComments);
-    })
-    .catch(() => {
-      this._filmPopupComponent = new PopupFilmDetails(this._film);
-    })
-    .finally(() => {
-      this._filmPopupComponent.setCloseClickHandler(this._deletePopup);
-      this._filmPopupComponent.restoreHandlers();
-      this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-      this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
-      this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
-      this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
-      this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
-      render(document.querySelector(`body`), this._filmPopupComponent);
-    });
+    this._filmPopupComponent = new PopupFilmDetails(this._film);
+    render(document.querySelector(`body`), this._filmPopupComponent);
+    this._filmPopupComponent.setCloseClickHandler(this._deletePopup);
+    this._filmPopupComponent.restoreHandlers();
+    this._filmPopupComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmPopupComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._filmPopupComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmPopupComponent.setDeleteCommentClickHandler(this._handleDeleteCommentClick);
+    this._filmPopupComponent.setFormSubmitHandler(this._handleFormSubmit);
     document.addEventListener(`keydown`, this._closePopupByEscKeyDown);
   }
 }
